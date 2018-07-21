@@ -6,13 +6,13 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 18:53:51 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/18 13:52:57 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/21 00:05:14 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-void	init_md5(t_md5 *md, int i)
+void	md5_init(t_md5 *md, int i)
 {
 	md->a = 0x67452301;
 	md->b = 0xefcdab89;
@@ -35,11 +35,11 @@ void	init_md5(t_md5 *md, int i)
 			OR(i % 4 == 3, md->s[i] = 20);
 		}
 	}
-	fucking_norme(md, 31);
+	md5_init2(md, 31);
 	md5_hex(md);
 }
 
-void	fucking_norme(t_md5 *md, int i)
+void	md5_init2(t_md5 *md, int i)
 {
 	while (++i < 64)
 	{

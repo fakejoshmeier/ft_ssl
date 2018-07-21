@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exe_md5.c                                          :+:      :+:    :+:   */
+/*   md5_exe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/17 15:21:58 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/18 23:40:02 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/21 00:03:53 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-char	*exe_md5(t_ssl *ssl, char *input)
+char	*md5_exe(t_ssl *ssl, char *input)
 {
 	t_md5	md5;
 	size_t	i;
 	int		j;
 
-	init_md5(&md5, -1);
-	append_bits(&md5, ssl, input);
+	md5_init(&md5, -1);
+	md5_bits(&md5, ssl, input);
 	i = -1;
 	while (++i < ((ssl->in_size * 8) / 512))
 	{
@@ -46,7 +46,7 @@ char	*exe_md5(t_ssl *ssl, char *input)
 ** end.  Or since it's memcpy, stuff it in.
 */
 
-void	append_bits(t_md5 *md5, t_ssl *ssl, char *input)
+void	md5_bits(t_md5 *md5, t_ssl *ssl, char *input)
 {
 	size_t		bits;
 	uint64_t	og_bit_length;
@@ -97,15 +97,17 @@ void	md5_algo(t_md5 *md5, int i)
 	md5->b2 = md5->b2 + LEFT_ROT(md5->f, md5->s[i]);
 }
 
-//figure out how to append 
+/*
+** Thank you to Brendan for explaining how unions work
+*/
 
 char	*md5_out(t_md5 *md5)
 {
-	t_u32		u;
-	char		*ret;
-	char		*str;
-	int			i;
-	int			j;
+	t_u32	u;
+	char	*ret;
+	char	*str;
+	int		i;
+	int		j;
 
 	NULL_GUARD(ret = (char *)ft_memalloc(33));
 	str = "0123456789abcdef";
