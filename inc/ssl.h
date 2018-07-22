@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/21 00:04:38 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/21 21:11:13 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@
 // {
 // 	t_node			*top;
 // }					t_stack;
+typedef union		u_bit62
+{
+	uint64_t		init;
+	uint32_t		piece[2];
+	uint16_t		chunk[4];
+	uint8_t			nugget[8];
+}					t_u64;
 
 typedef union		u_bit32
 {
@@ -46,9 +53,6 @@ typedef union		u_bit32
 
 typedef struct		s_sha
 {
-	uint32_t		k[64];
-	uint64_t		k2[80];
-	uint32_t		m[16];
 	uint32_t		h0;
 	uint32_t		h1;
 	uint32_t		h2;
@@ -65,6 +69,8 @@ typedef struct		s_sha
 	uint32_t		f;
 	uint32_t		g;
 	uint32_t		h;
+	uint32_t		k[64];
+	uint32_t		w[64];
 	uint8_t			*msg;
 }
 
@@ -107,6 +113,11 @@ typedef struct		s_ssl
 //	void			*exe(*t_ssl);
 //	void			*enc(*t_ssl);
 }					t_ssl;
+/*
+** Endian functions
+*/
+
+uint64_t
 
 /*
 ** MD5 Functions

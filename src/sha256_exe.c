@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/21 00:02:20 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/21 00:35:52 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/21 21:11:22 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,11 @@ void	sha256_bits(t_sha *sha, t_ssl *ssl, char *input)
 	zero_bits = 0;
 	while ((bits + zero_bits + 65) % 512)
 		++zero_bits;
-	sha->msg = ft_memalloc(len + 1 + (zero_bits / 8) + 8);
-	sha->msg = ft_memcpy(sha->msg, input, ssl->in_size);
-	//endian switch
+	sha->msg = ft_memalloc(ssl->in_size + 1 + (zero_bits / 8) + 8);
+	ft_memcpy(sha->msg, input, ssl->in_size);
+	
+	ft_memcpy(sha->msg + ssl->in_size + 1 + (zero_bits / 8), &bits, 8);
+	ssl->in_size += 1 + (zero_bits / 8) + 8;
 }
 
 void	
