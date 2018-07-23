@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/22 16:47:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/23 00:08:32 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/23 00:20:11 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	sha256_algo(t_sha *sha)
 	uint32_t	s1;
 	uint32_t	ch;
 	uint32_t	maj;
-	unsigned short	i;
+	int			i;
 
 	i = -1;
 	while (++i < 64)

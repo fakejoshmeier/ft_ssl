@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/21 00:02:20 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/23 00:15:43 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/23 00:40:10 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*sha256_out(t_sha *sha)
 	j = 3;
 	while (i < 64)
 	{
-		MATCH(i < 8, u.init = i < 8 ? sha->h0 : sha->h1);
+		MATCH(i < 16, u.init = i < 8 ? sha->h0 : sha->h1);
 		OR(16 <= i && i < 32, u.init = i < 24 ? sha->h2 : sha->h3);
 		OR(32 <= i && i < 48, u.init = i < 40 ? sha->h4 : sha->h5);
 		OR(48 <= i && i < 64, u.init = i < 54 ? sha->h6 : sha->h7);
