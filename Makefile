@@ -6,13 +6,13 @@
 #    By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/14 16:30:04 by jmeier            #+#    #+#              #
-#    Updated: 2018/07/20 17:21:54 by jmeier           ###   ########.fr        #
+#    Updated: 2018/07/22 23:05:45 by jmeier           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ssl
 
-FUNC = main md5_exe md5_init
+FUNC = main md5_exe md5_init sha256_algo sha256_exe sha256_init endian
 
 C_LOC = src/
 C_NAM = $(addsuffix .c, $(FUNC))

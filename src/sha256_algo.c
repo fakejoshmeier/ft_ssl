@@ -6,13 +6,13 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/22 16:47:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/22 18:23:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/23 00:08:32 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-void	sha256_words(*sha, int *j)
+void	sha256_words(t_sha *sha, size_t *j)
 {
 	int			i;
 	uint32_t	s0;
@@ -22,16 +22,16 @@ void	sha256_words(*sha, int *j)
 	while (++i < 64)
 	{
 		if (i < 16)
-		{
-			ft_memcpy(sha->w[i], sha->msg[*j], 16);
-			*j += 16;
-		}
-		else
+			sha->w[i] = ((uint32_t)sha->msg[(*j)++] << 24) |
+			(((uint32_t)sha->msg[(*j)++]) << 16) |
+			(((uint32_t)sha->msg[(*j)++]) << 8) |
+			((uint32_t)sha->msg[(*j)++]);
+		else if (16 <= i)
 		{
 			s0 = RITE_ROT(sha->w[i - 15], 7) ^ RITE_ROT(sha->w[i - 15], 18) ^
-				(sha->w[i - 15] >> 3);
+				sha->w[i - 15] >> 3;
 			s1 = RITE_ROT(sha->w[i - 2], 17) ^ RITE_ROT(sha->w[i - 2], 19) ^
-				(sha->w[i - 2] >> 10);
+				sha->w[i - 2] >> 10;
 			sha->w[i] = sha->w[i - 16] + s0 + sha->w[i - 7] + s1;
 		}
 	}
@@ -55,7 +55,7 @@ void	sha256_algo(t_sha *sha)
 	uint32_t	s1;
 	uint32_t	ch;
 	uint32_t	maj;
-	int			i;
+	unsigned short	i;
 
 	i = -1;
 	while (++i < 64)

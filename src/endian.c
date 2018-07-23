@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/21 16:53:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/22 18:23:44 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/22 23:39:51 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,5 @@ uint64_t	b_endian64(uint64_t num)
 			(((uint64_t)(u.nugget[5])) << 16) |
 			(((uint64_t)(u.nugget[6])) << 8) |
 			(((uint64_t)(u.nugget[7]))));
-	return (num)
+	return (num);
 }

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/22 18:23:49 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/23 00:03:46 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ typedef struct		s_sha
 	uint32_t		f;
 	uint32_t		g;
 	uint32_t		h;
+	uint32_t		t1;
+	uint32_t		t2;
 	uint32_t		k[64];
 	uint32_t		w[64];
 	uint8_t			*msg;
@@ -142,5 +144,12 @@ char	*sha256_exe(t_ssl *ssl, char *input);
 void	sha256_init(t_sha *sha);
 void	sha256_init1(t_sha *sha);
 void	sha256_init2(t_sha *sha);
+void	sha256_bits(t_sha *sha, t_ssl *ssl, char *input);
+void	sha256_words(t_sha *sha, size_t *j);
+void	sha256_var_init(t_sha *sha);
+void	sha256_algo(t_sha *sha);
+void	sha256_add_chunk(t_sha *sha);
+char	*sha256_out(t_sha *sha);
+
 
 #endif
