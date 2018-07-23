@@ -6,11 +6,16 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/17 15:21:58 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/21 00:03:53 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/22 18:23:47 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
+
+/*
+** The 128 is 0b10000000, giving me that all important 1 bit by the end of the
+** original message
+*/
 
 char	*md5_exe(t_ssl *ssl, char *input)
 {
@@ -58,7 +63,7 @@ void	md5_bits(t_md5 *md5, t_ssl *ssl, char *input)
 	bits /= 8;
 	md5->msg = ft_memalloc(bits + 64);
 	ft_memcpy(md5->msg, input, ssl->in_size);
-	md5->msg[ssl->in_size] = 0b10000000;
+	md5->msg[ssl->in_size] = 128;
 	ft_memcpy(md5->msg + bits, &og_bit_length, 8);
 	ssl->in_size = bits + 8;
 	ssl->ou_size = 32;

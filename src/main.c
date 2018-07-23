@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/20 17:21:40 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/22 18:23:52 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int		main(int ac, char *av[])
 	if (ac == 1)
 		ft_error(USAGE, 1);
 	ft_bzero(&ssl, (sizeof(t_ssl)));
-	if (!read_commands(av + 1, &ssl))
-
+//	if (!read_commands(av + 1, &ssl))
+	ssl.in_size = ft_strlen(av[1]);
+	printf("%s\n", md5_exe(&ssl, av[1]));
 	return (0);
 }

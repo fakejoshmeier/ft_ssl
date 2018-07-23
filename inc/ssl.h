@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/21 21:11:13 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/22 18:23:49 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ typedef struct		s_sha
 	uint32_t		k[64];
 	uint32_t		w[64];
 	uint8_t			*msg;
-}
+}					t_sha;
 
 typedef struct		s_md5
 {
@@ -117,7 +117,8 @@ typedef struct		s_ssl
 ** Endian functions
 */
 
-uint64_t
+uint64_t	b_endian64(uint64_t num);
+int			check_endianness(void);
 
 /*
 ** MD5 Functions

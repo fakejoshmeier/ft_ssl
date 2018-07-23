@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/21 16:53:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/21 18:01:03 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/22 18:23:44 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int		check_endianness(void)
 
 uint64_t	b_endian64(uint64_t num)
 {
-	t_u64	u;
+	t_u64			u;
 
 	u.init = num;
 	if (check_endianness())
