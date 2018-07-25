@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/23 00:20:51 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/25 04:26:32 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void	ft_error(char *str, int i)
 		ft_putendl("Message Digest commands:\nmd5\nsha256\n");
 		ft_putendl("Cipher commands:");
 	}
+	if (i == 3)
+		ft_printf("%s: No such file");
 	exit(1);
 }
 
@@ -33,9 +35,13 @@ int		main(int ac, char *av[])
 	if (ac == 1)
 		ft_error(USAGE, 1);
 	ft_bzero(&ssl, (sizeof(t_ssl)));
-//	if (!read_commands(av + 1, &ssl))
-	ssl.in_size = ft_strlen(av[1]);
-//	printf("%s\n", md5_exe(&ssl, av[1]));
-	printf("%s\n", sha256_exe(&ssl, av[1]));
+	if (!read_commands(av + 1, &ssl))
+		ft_error(av + 1, 2);
+	read_inputs(av + 1, &ssl);
+	
+	// ssl.in_size = ft_strlen(av[1]);
+	// printf("%s\n", md5_exe(&ssl, av[1]));
+	// ssl.in_size = ft_strlen(av[1]);
+	// printf("%s\n", sha256_exe(&ssl, av[1]));
 	return (0);
 }
