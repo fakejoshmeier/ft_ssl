@@ -6,13 +6,14 @@
 #    By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/14 16:30:04 by jmeier            #+#    #+#              #
-#    Updated: 2018/07/22 23:05:45 by jmeier           ###   ########.fr        #
+#    Updated: 2018/07/27 03:10:57 by jmeier           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ssl
 
-FUNC = main md5_exe md5_init sha256_algo sha256_exe sha256_init endian
+FUNC = main md5_exe md5_init sha256_algo sha256_exe sha256_init endian \
+input message_digest read_commands print
 
 C_LOC = src/
 C_NAM = $(addsuffix .c, $(FUNC))

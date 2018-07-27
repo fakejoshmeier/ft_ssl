@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/23 23:12:01 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/25 04:26:28 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 03:33:51 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,16 @@
 
 void	message_digest(t_ssl *ssl)
 {
-	if ((!ssl->file_in && !ssl->str_in && !ssl->f.p) || ssl->f.p == 1)
+	if ((!ssl->file_in && !ssl->str_in && !ssl->flag->p) || ssl->flag->p == 1)
 		message_digest_print(ssl, stdin_in(ssl), 1);
 	if (ssl->str_in)
 		message_digest_str(ssl);
 	if (ssl->file_in)
 		message_digest_file(ssl);
+	if (ssl->str_in)
+		ft_free(ssl->str_in);
+	if (ssl->file_in)
+		ft_free(ssl->file_in);
 }
 
 void	message_digest_print(t_ssl *ssl, char *in, int id)
@@ -62,7 +66,7 @@ void	message_digest_file(t_ssl *ssl)
 	while (ssl->file_in[++i])
 	{
 		ssl->filename = ssl->file_in[i];
-		in = //find a way to do the big read on filename
+		in = file_in(ssl);
 		message_digest_print(ssl, in, 3);
 	}
 }

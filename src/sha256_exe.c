@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/21 00:02:20 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/23 18:06:37 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 00:51:22 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	sha256_bits(t_sha *sha, t_ssl *ssl, char *input)
 	bits = b_endian64(bits);
 	ft_memcpy(sha->msg + ssl->in_size + 1 + (zero_bits / 8), &bits, 8);
 	ssl->in_size = ssl->in_size + 1 + (zero_bits / 8) + 8;
+	ssl->ou_size = 64;
 }
 
 char	*sha256_out(t_sha *sha)

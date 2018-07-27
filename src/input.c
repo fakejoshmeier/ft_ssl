@@ -6,41 +6,50 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/17 14:53:38 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/25 04:26:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 03:27:06 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-int		read_commands(char **av, t_ssl *ssl)
+char	*stdin_in(t_ssl *ssl)
 {
-	if (ft_strequ(*av, "md5"))
+	char	*ret;
+	char	buf[256];
+	int		i;
+	
+	ret = ft_strnew(0);
+	ssl->in_size = 0;
+	while ((i = read(0, &buf, 255)))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = md5_exe;
-		primer(ssl, "MD5", "md5");
+		if (i == -1)
+		{
+			ft_printf("ft_ssl: read error: failed to read from stdin\n");
+			ft_free(ret);
+			return (NULL);
+		}
+		buf[i] = '\0';
+		if (!(ret = ft_strfjoin(ret, buf)))
+		{
+			ft_printf("ft_ssl: Malloc fail\n");
+			free(ret);
+			return (NULL);
+		}
+		ssl->in_size += i;
 	}
-	else if (ft_strequ(*av, "sha256"))
-	{
-		ssl->cmd = message_digest;
-		ssl->exe = sha256_exe;
-		primer(ssl, "SHA256", "sha256");
-	}
-	return (ssl->exe ? 1 : 0);
+	return (ret);
 }
 
-void	primer(t_ssl *ssl, char *op, char *op_)
+char	*file_in(t_ssl *ssl)
 {
-	char	cmd[ft_strlen(op) + 1];
-	char	cmd_[ft_strlen(op_) + 1];
+	char	*ret;
 
-	ft_strcpy(cmd, op);
-	ssl->cmd = cmd;
-	ft_strcpy(cmd_, op_);
-	ssl->cmd_ = cmd_;
-}
-
-void	read_inputs(char **av, t_ssl *ssl)
-{
-
+	ssl->in_size = get_file_contents(ssl->filename, &ret);
+	if (!ret)
+	{
+		ft_printf("ft_ssl: %s: %s: no such files or directory", ssl->cmd_,
+			ssl->filename);
+		return (NULL);
+	}
+	return (ret);
 }

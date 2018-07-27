@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/23 00:03:46 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 03:35:23 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@
 # include <stdio.h>
 # include <stdlib.h>
 # define USAGE "usage: ft_ssl command [command opts] [command args]"
+# define MESSAGE_DIGEST_FLAGS "-p-q-r-s"
 # define MD5_F1(b, c, d) ((b & c) | ((~b) & d))
 # define MD5_F2(b, c, d) ((d & b) | ((~d) & c))
 # define MD5_F3(b, c, d) (b ^ c ^ d)
 # define MD5_F4(b, c, d) (c ^ (b | (~d)))
 # define LEFT_ROT(x, c) ((x << c) | (x >> (32 - c)))
 # define RITE_ROT(x, c) ((x >> c) | (x << (32 - c)))
+
 
 // typedef struct		s_node
 // {
@@ -106,50 +108,80 @@ typedef struct		s_ssl
 {
 	size_t			in_size;
 	size_t			ou_size;
-	char			**stdin_input;
-	char			**file_input;
-	char			**string_input;
+	char			*stdin_input;
+	char			**file_in;
+	char			*filename;
+	char			**str_in;
+	char			*str_curr;
 	int				run;
+	char			*_cmd;
+	char			*cmd_;
+	char			*valid_flags;
 	t_flag			*flag;
 	t_md5			*md5;
-//	void			*exe(*t_ssl);
-//	void			*enc(*t_ssl);
+	void			(*cmd)(struct s_ssl *);
+	char			*(*exe)(struct s_ssl *, char *);
 }					t_ssl;
+
+/*
+** Main and Error handling
+*/
+
+int		main(int ac, char *av[]);
+void	ft_error(char *str, int i);
+t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl);
+
+/*
+** I/O handling
+*/
+
+int					read_commands(char **av, t_ssl *ssl);
+void				primer(t_ssl *ssl, char *op, char *op_, char *valid);
+void				message_digest(t_ssl *ssl);
+void				message_digest_print(t_ssl *ssl, char *in, int id);
+void				message_digest_str(t_ssl *ssl);
+void				message_digest_file(t_ssl *ssl);
+char				*stdin_in(t_ssl *ssl);
+char				*file_in(t_ssl *ssl);
+void				std_out(t_ssl *ssl, char *in, char *out);
+void				str_out(t_ssl *ssl, char *in, char *out);
+void				file_out(t_ssl *ssl, char *out);
+
 /*
 ** Endian functions
 */
 
-uint64_t	b_endian64(uint64_t num);
-int			check_endianness(void);
+uint64_t			b_endian64(uint64_t num);
+int					check_endianness(void);
+
 
 /*
 ** MD5 Functions
 */
 
-char	*md5_exe(t_ssl *ssl, char *input);
-void	md5_init(t_md5 *md, int i);
-void	md5_init2(t_md5 *md, int i);
-void	md5_hex(t_md5 *md5);
-void	md5_hex1(t_md5 *md5);
-void	md5_hex2(t_md5 *md5);
-void	md5_bits(t_md5 *md5, t_ssl *ssl, char *input);
-void	md5_algo(t_md5 *md5, int i);
-char	*md5_out(t_md5 *md5);
+char				*md5_exe(t_ssl *ssl, char *input);
+void				md5_init(t_md5 *md, int i);
+void				md5_init2(t_md5 *md, int i);
+void				md5_hex(t_md5 *md5);
+void				md5_hex1(t_md5 *md5);
+void				md5_hex2(t_md5 *md5);
+void				md5_bits(t_md5 *md5, t_ssl *ssl, char *input);
+void				md5_algo(t_md5 *md5, int i);
+char				*md5_out(t_md5 *md5);
 
 /*
 ** SHA-256 Functions
 */
 
-char	*sha256_exe(t_ssl *ssl, char *input);
-void	sha256_init(t_sha *sha);
-void	sha256_init1(t_sha *sha);
-void	sha256_init2(t_sha *sha);
-void	sha256_bits(t_sha *sha, t_ssl *ssl, char *input);
-void	sha256_words(t_sha *sha, size_t *j);
-void	sha256_var_init(t_sha *sha);
-void	sha256_algo(t_sha *sha);
-void	sha256_add_chunk(t_sha *sha);
-char	*sha256_out(t_sha *sha);
-
+char				*sha256_exe(t_ssl *ssl, char *input);
+void				sha256_init(t_sha *sha);
+void				sha256_init1(t_sha *sha);
+void				sha256_init2(t_sha *sha);
+void				sha256_bits(t_sha *sha, t_ssl *ssl, char *input);
+void				sha256_words(t_sha *sha, size_t *j);
+void				sha256_var_init(t_sha *sha);
+void				sha256_algo(t_sha *sha);
+void				sha256_add_chunk(t_sha *sha);
+char				*sha256_out(t_sha *sha);
 
 #endif

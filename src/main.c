@@ -6,11 +6,41 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/25 04:26:32 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 03:34:04 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
+
+t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl)
+{
+	t_flag	*f;
+	int		i;
+
+	f = (t_flag *)ft_memalloc(sizeof(t_flag));
+	i = 0;
+	while (**av[0] == '-')
+	{
+		if (ft_strequ("-p", **av) && ft_strstr(valid, "-p"))
+			f->p = 1;
+		else if (ft_strequ("-q", **av) && ft_strstr(valid, "-q"))
+			f->q = 1;
+		else if (ft_strequ("-r", **av) && ft_strstr(valid, "-r"))
+			f->r = 1;
+		else if (ft_strequ("-s", **av) && ft_strstr(valid, "-s"))
+		{
+			f->s = 1;
+			*av += 1;
+			ssl->str_in = (char **)ft_realloc(ssl->str_in, i + 1);
+			ssl->str_in[i++] = **av;
+		}
+		else
+			ft_error(**av, 3);
+		*av += 1;
+	}
+	ssl->file_in = *av;
+	return (f);
+}
 
 void	ft_error(char *str, int i)
 {
@@ -24,7 +54,12 @@ void	ft_error(char *str, int i)
 		ft_putendl("Cipher commands:");
 	}
 	if (i == 3)
-		ft_printf("%s: No such file");
+	{
+		ft_printf("unknown option '%s'\noptions are\n-p\techo STDIN to ", str);
+		ft_printf("STDOUT and append the checksum to STDOUT\n-q\tquiet mode");
+		ft_printf("\n-r\treverse the format of the output\n-s\tprint the sum");
+		ft_putendl(" of the given string");
+	}
 	exit(1);
 }
 
@@ -35,13 +70,9 @@ int		main(int ac, char *av[])
 	if (ac == 1)
 		ft_error(USAGE, 1);
 	ft_bzero(&ssl, (sizeof(t_ssl)));
-	if (!read_commands(av + 1, &ssl))
-		ft_error(av + 1, 2);
-	read_inputs(av + 1, &ssl);
-	
-	// ssl.in_size = ft_strlen(av[1]);
-	// printf("%s\n", md5_exe(&ssl, av[1]));
-	// ssl.in_size = ft_strlen(av[1]);
-	// printf("%s\n", sha256_exe(&ssl, av[1]));
+	if (!read_commands(++av, &ssl))
+		ft_error(*av, 2);
+	ssl.flag = read_flags(&av, ssl.valid_flags, &ssl);
+	ssl.cmd(&ssl);
 	return (0);
 }
