@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 00:37:34 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 01:36:09 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,14 @@ void				md5_hex2(t_md5 *md5);
 void				md5_bits(t_md5 *md5, t_ssl *ssl, char *input);
 void				md5_algo(t_md5 *md5, int i);
 char				*md5_out(t_md5 *md5);
+
+/*
+** SHA-224 Functions - Uses most of the SHA-256 functions
+*/
+
+char				*sha224_exe(t_ssl *ssl, char *input);
+void				sha224_init(t_sha *sha);
+char				*sha224_out(t_sha *sha);
 
 /*
 ** SHA-256 Functions

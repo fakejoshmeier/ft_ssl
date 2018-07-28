@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/23 23:12:01 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 00:57:31 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 01:45:40 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	message_digest(t_ssl *ssl)
 		message_digest_str(ssl);
 	if (ssl->file_in)
 		message_digest_file(ssl);
-	if (*(ssl->str_in))
+	if (ssl->str_in)
 	{
 		free(ssl->str_in);
 		ssl->str_in = NULL;
