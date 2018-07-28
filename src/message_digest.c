@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/23 23:12:01 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 03:33:51 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 23:37:22 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ void	message_digest(t_ssl *ssl)
 		message_digest_file(ssl);
 	if (ssl->str_in)
 		ft_free(ssl->str_in);
-	if (ssl->file_in)
-		ft_free(ssl->file_in);
 }
 
 void	message_digest_print(t_ssl *ssl, char *in, int id)
@@ -39,8 +37,10 @@ void	message_digest_print(t_ssl *ssl, char *in, int id)
 		str_out(ssl, in, out);
 	else if (id == 3)
 		file_out(ssl, out);
-	ft_free(in);
-	ft_free(out);
+	free(in);
+	free(out);
+	in = NULL;
+	out = NULL;
 }
 
 void	message_digest_str(t_ssl *ssl)
@@ -53,6 +53,7 @@ void	message_digest_str(t_ssl *ssl)
 	{
 		ssl->str_curr = ssl->str_in[i];
 		in = ft_strdup(ssl->str_curr);
+		ssl->in_size = ft_strlen(in);
 		message_digest_print(ssl, in, 2);
 	}
 }

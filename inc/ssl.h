@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 03:35:23 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 23:41:23 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # define USAGE "usage: ft_ssl command [command opts] [command args]"
-# define MESSAGE_DIGEST_FLAGS "-p-q-r-s"
+# define MESSAGE_DIGEST_FLAGS "-p -q -r -s"
 # define MD5_F1(b, c, d) ((b & c) | ((~b) & d))
 # define MD5_F2(b, c, d) ((d & b) | ((~d) & c))
 # define MD5_F3(b, c, d) (b ^ c ^ d)
@@ -27,17 +27,6 @@
 # define LEFT_ROT(x, c) ((x << c) | (x >> (32 - c)))
 # define RITE_ROT(x, c) ((x >> c) | (x << (32 - c)))
 
-
-// typedef struct		s_node
-// {
-// 	char			*name;
-// 	t_node			*next;
-// }					t_node;
-
-// typedef struct		s_stack
-// {
-// 	t_node			*top;
-// }					t_stack;
 typedef union		u_bit62
 {
 	uint64_t		init;
@@ -114,7 +103,7 @@ typedef struct		s_ssl
 	char			**str_in;
 	char			*str_curr;
 	int				run;
-	char			*_cmd;
+	char			*cmd__;
 	char			*cmd_;
 	char			*valid_flags;
 	t_flag			*flag;
@@ -127,9 +116,9 @@ typedef struct		s_ssl
 ** Main and Error handling
 */
 
-int		main(int ac, char *av[]);
-void	ft_error(char *str, int i);
-t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl);
+int					main(int ac, char *av[]);
+void				ft_error(char *str, int i);
+t_flag				*read_flags(char ***av, char *valid, t_ssl *ssl);
 
 /*
 ** I/O handling
@@ -153,7 +142,6 @@ void				file_out(t_ssl *ssl, char *out);
 
 uint64_t			b_endian64(uint64_t num);
 int					check_endianness(void);
-
 
 /*
 ** MD5 Functions

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/17 14:53:38 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 03:27:06 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 22:42:07 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*stdin_in(t_ssl *ssl)
 	char	*ret;
 	char	buf[256];
 	int		i;
-	
+
 	ret = ft_strnew(0);
 	ssl->in_size = 0;
 	while ((i = read(0, &buf, 255)))

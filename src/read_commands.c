@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 22:26:46 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 03:37:32 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 23:41:56 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,7 @@ int		read_commands(char **av, t_ssl *ssl)
 
 void	primer(t_ssl *ssl, char *op, char *op_, char *flags)
 {
-	char	_cmd[ft_strlen(op) + 1];
-	char	cmd_[ft_strlen(op_) + 1];
-	char	flag[ft_strlen(flags) + 1];
-
-	ft_strcpy(_cmd, op);
-	ssl->_cmd = _cmd;
-	ft_strcpy(cmd_, op_);
-	ssl->cmd_ = cmd_;
-	ft_strcpy(flags, flag);
-	ssl->valid_flags = flag;
+	ssl->cmd__ = op;
+	ssl->cmd_ = op_;
+	ssl->valid_flags = flags;
 }

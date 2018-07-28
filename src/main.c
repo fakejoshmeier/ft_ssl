@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 03:34:04 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/27 23:39:48 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,23 @@ t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl)
 
 	f = (t_flag *)ft_memalloc(sizeof(t_flag));
 	i = 0;
-	while (**av[0] == '-')
+	while (**av && **av[0] == '-')
 	{
-		if (ft_strequ("-p", **av) && ft_strstr(valid, "-p"))
-			f->p = 1;
-		else if (ft_strequ("-q", **av) && ft_strstr(valid, "-q"))
-			f->q = 1;
-		else if (ft_strequ("-r", **av) && ft_strstr(valid, "-r"))
-			f->r = 1;
-		else if (ft_strequ("-s", **av) && ft_strstr(valid, "-s"))
+		if (ft_strequ(**av, "-s") && ft_strstr(valid, "-p"))
 		{
 			f->s = 1;
-			*av += 1;
-			ssl->str_in = (char **)ft_realloc(ssl->str_in, i + 1);
+			(*av)++;
+			ssl->str_in = (char **)ft_realloc(ssl->str_in, (sizeof(char *) *
+				(i + 1)));
 			ssl->str_in[i++] = **av;
 		}
-		else
-			ft_error(**av, 3);
-		*av += 1;
+		OR(ft_strequ("-p", **av) && ft_strstr(valid, "-p"), f->p = 1);
+		OR(ft_strequ("-q", **av) && ft_strstr(valid, "-q"), f->q = 1);
+		OR(ft_strequ("-r", **av) && ft_strstr(valid, "-r"), f->r = 1);
+		OTHERWISE(ft_error(**av, 3));
+		(*av)++;
 	}
-	ssl->file_in = *av;
+	MATCH(**av, ssl->file_in = *av);
 	return (f);
 }
 
@@ -70,9 +67,12 @@ int		main(int ac, char *av[])
 	if (ac == 1)
 		ft_error(USAGE, 1);
 	ft_bzero(&ssl, (sizeof(t_ssl)));
-	if (!read_commands(++av, &ssl))
+	av += 1;
+	if (!read_commands(av, &ssl))
 		ft_error(*av, 2);
+	av += 1;
 	ssl.flag = read_flags(&av, ssl.valid_flags, &ssl);
 	ssl.cmd(&ssl);
+	ft_free(ssl.flag);
 	return (0);
 }
