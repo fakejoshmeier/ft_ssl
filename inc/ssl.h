@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 23:41:23 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 00:37:34 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,10 @@ typedef struct		s_ssl
 	char			*stdin_input;
 	char			**file_in;
 	char			*filename;
+	int				file_tot;
 	char			**str_in;
 	char			*str_curr;
+	int				str_tot;
 	int				run;
 	char			*cmd__;
 	char			*cmd_;

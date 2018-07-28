@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 23:39:48 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 00:37:41 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl)
 			ssl->str_in = (char **)ft_realloc(ssl->str_in, (sizeof(char *) *
 				(i + 1)));
 			ssl->str_in[i++] = **av;
+			ssl->str_tot = i;
 		}
 		OR(ft_strequ("-p", **av) && ft_strstr(valid, "-p"), f->p = 1);
 		OR(ft_strequ("-q", **av) && ft_strstr(valid, "-q"), f->q = 1);
@@ -73,6 +74,7 @@ int		main(int ac, char *av[])
 	av += 1;
 	ssl.flag = read_flags(&av, ssl.valid_flags, &ssl);
 	ssl.cmd(&ssl);
-	ft_free(ssl.flag);
+	free(ssl.flag);
+	ssl.flag = NULL;
 	return (0);
 }

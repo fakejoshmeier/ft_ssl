@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/17 14:53:38 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 22:42:07 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 00:54:39 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ char	*file_in(t_ssl *ssl)
 	char	*ret;
 
 	ssl->in_size = get_file_contents(ssl->filename, &ret);
-	if (!ret)
+	if (!ssl->in_size)
 	{
-		ft_printf("ft_ssl: %s: %s: no such files or directory", ssl->cmd_,
+		ft_printf("ft_ssl: %s: %s: No such file or directory\n", ssl->cmd_,
 			ssl->filename);
 		return (NULL);
 	}
