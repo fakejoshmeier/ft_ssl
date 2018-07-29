@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/22 16:47:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/27 22:40:04 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 15:37:14 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	sha256_words(t_sha *sha, size_t *j)
 			(((uint32_t)sha->msg[(*j)++]) << 16) |
 			(((uint32_t)sha->msg[(*j)++]) << 8) |
 			((uint32_t)sha->msg[(*j)++]);
-		else if (16 <= i)
+		else
 		{
 			s0 = RITE_ROT(sha->w[i - 15], 7) ^ RITE_ROT(sha->w[i - 15], 18) ^
 				sha->w[i - 15] >> 3;
