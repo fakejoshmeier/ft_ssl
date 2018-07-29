@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 22:26:46 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 18:46:52 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 21:51:23 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,18 @@ int		read_commands(char **av, t_ssl *ssl)
 		ssl->exe = sha256_exe;
 		primer(ssl, "SHA256", "sha256", MESSAGE_DIGEST_FLAGS);
 	}
-	else if (ft_strequ(*av, "sha512"))
+	else if (ft_strequ(*av, "sha384"))
+	{
+		ssl->cmd = message_digest;
+		ssl->exe = sha384_exe;
+		primer(ssl, "SHA384", "sha384", MESSAGE_DIGEST_FLAGS);
+	}
+	return (ssl->exe ? 1 : read_commands1(av, ssl));
+}
+
+int		read_commands1(char **av, t_ssl *ssl)
+{
+	if (ft_strequ(*av, "sha512"))
 	{
 		ssl->cmd = message_digest;
 		ssl->exe = sha512_exe;

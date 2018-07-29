@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 01:36:09 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/28 21:53:20 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@
 # define MD5_F4(b, c, d) (c ^ (b | (~d)))
 # define LEFT_ROT(x, c) ((x << c) | (x >> (32 - c)))
 # define RITE_ROT(x, c) ((x >> c) | (x << (32 - c)))
+# define S512_ROT(x, c) ((x >> c) | (x << (64 - c)))
 
-typedef union		u_bit62
+typedef union		u_bit64
 {
 	uint64_t		init;
 	uint32_t		piece[2];
@@ -66,6 +67,31 @@ typedef struct		s_sha
 	uint32_t		w[64];
 	uint8_t			*msg;
 }					t_sha;
+
+typedef struct		s_s512
+{
+	uint64_t		h0;
+	uint64_t		h1;
+	uint64_t		h2;
+	uint64_t		h3;
+	uint64_t		h4;
+	uint64_t		h5;
+	uint64_t		h6;
+	uint64_t		h7;
+	uint64_t		a;
+	uint64_t		b;
+	uint64_t		c;
+	uint64_t		d;
+	uint64_t		e;
+	uint64_t		f;
+	uint64_t		g;
+	uint64_t		h;
+	uint64_t		t1;
+	uint64_t		t2;
+	uint64_t		k[80];
+	uint64_t		w[80];
+	uint8_t			*msg;
+}					t_s512;
 
 typedef struct		s_md5
 {
@@ -127,6 +153,7 @@ t_flag				*read_flags(char ***av, char *valid, t_ssl *ssl);
 */
 
 int					read_commands(char **av, t_ssl *ssl);
+int					read_commands1(char **av, t_ssl *ssl);
 void				primer(t_ssl *ssl, char *op, char *op_, char *valid);
 void				message_digest(t_ssl *ssl);
 void				message_digest_print(t_ssl *ssl, char *in, int id);
@@ -181,5 +208,29 @@ void				sha256_var_init(t_sha *sha);
 void				sha256_algo(t_sha *sha);
 void				sha256_add_chunk(t_sha *sha);
 char				*sha256_out(t_sha *sha);
+
+/*
+** SHA-384 Functions - Uses most of the SHA-512 functions
+*/
+
+char				*sha384_exe(t_ssl *ssl, char *input);
+void				sha384_init(t_s512 *sha);
+char				*sha384_out(t_s512 *sha);
+
+/*
+** SHA-512 Functions
+*/
+
+char				*sha512_exe(t_ssl *ssl, char *in);
+void				sha512_init(t_s512 *sha);
+void				sha512_init1(t_s512 *sha);
+void				sha512_init2(t_s512 *sha);
+void				sha512_init3(t_s512 *sha);
+void				sha512_init4(t_s512 *sha);
+void				sha512_bits(t_s512 *sha, t_ssl *ssl, char *input);
+void				sha512_words(t_s512 *sha, uint8_t *msg);
+void				sha512_round(t_s512 *sha);
+void				sha512_algo(t_s512 *sha);
+char				*sha512_out(t_s512 *sha);
 
 #endif
