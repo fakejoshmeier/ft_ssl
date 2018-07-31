@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 21:33:02 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/07/31 02:15:41 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ void	ft_error(char *str, int i)
 	{
 		ft_printf("ft_ssl: Error: '%s' is an invalid command.\n\n", str);
 		ft_putendl("Standard commands:\n");
-		ft_putendl("Message Digest commands:\nmd5\nsha256\n");
+		ft_putendl("Message Digest commands:\nmd5\nsha224\nsha256\nsha384");
+		ft_putendl("sha512\n");
 		ft_putendl("Cipher commands:");
 	}
 	if (i == 3)
