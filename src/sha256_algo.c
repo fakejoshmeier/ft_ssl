@@ -6,26 +6,25 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/22 16:47:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 15:37:14 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/10 15:06:37 by josh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-void	sha256_words(t_sha *sha, size_t *j)
+void	sha256_words(t_sha *sha, uint8_t *msg)
 {
 	int			i;
 	uint32_t	s0;
 	uint32_t	s1;
+	uint32_t	*chunk;
 
 	i = -1;
+	chunk = (uint32_t *)msg;
 	while (++i < 64)
 	{
 		if (i < 16)
-			sha->w[i] = ((uint32_t)sha->msg[(*j)++] << 24) |
-			(((uint32_t)sha->msg[(*j)++]) << 16) |
-			(((uint32_t)sha->msg[(*j)++]) << 8) |
-			((uint32_t)sha->msg[(*j)++]);
+			sha->w[i] = b_endian32(chunk[i]);
 		else
 		{
 			s0 = RITE_ROT(sha->w[i - 15], 7) ^ RITE_ROT(sha->w[i - 15], 18) ^
@@ -37,7 +36,7 @@ void	sha256_words(t_sha *sha, size_t *j)
 	}
 }
 
-void	sha256_var_init(t_sha *sha)
+void	sha256_round(t_sha *sha)
 {
 	sha->a = sha->h0;
 	sha->b = sha->h1;
@@ -47,6 +46,15 @@ void	sha256_var_init(t_sha *sha)
 	sha->f = sha->h5;
 	sha->g = sha->h6;
 	sha->h = sha->h7;
+	sha256_algo(sha);
+	sha->h0 += sha->a;
+	sha->h1 += sha->b;
+	sha->h2 += sha->c;
+	sha->h3 += sha->d;
+	sha->h4 += sha->e;
+	sha->h5 += sha->f;
+	sha->h6 += sha->g;
+	sha->h7 += sha->h;
 }
 
 void	sha256_algo(t_sha *sha)
@@ -77,14 +85,3 @@ void	sha256_algo(t_sha *sha)
 	}
 }
 
-void	sha256_add_chunk(t_sha *sha)
-{
-	sha->h0 += sha->a;
-	sha->h1 += sha->b;
-	sha->h2 += sha->c;
-	sha->h3 += sha->d;
-	sha->h4 += sha->e;
-	sha->h5 += sha->f;
-	sha->h6 += sha->g;
-	sha->h7 += sha->h;
-}
