@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 01:07:38 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 01:52:21 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/10 15:11:02 by josh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,15 @@ char	*sha224_exe(t_ssl *ssl, char *input)
 	t_sha	sha;
 	size_t	chunks;
 	size_t	i;
-	size_t	j;
 
 	sha224_init(&sha);
 	sha256_bits(&sha, ssl, input);
-	chunks = (ssl->in_size * 8) / 512;
+	chunks = ssl->in_size / 64;
 	i = -1;
-	j = 0;
 	while (++i < chunks)
 	{
-		sha256_words(&sha, &j);
-		sha256_var_init(&sha);
-		sha256_algo(&sha);
-		sha256_add_chunk(&sha);
+		sha256_words(&sha, (sha.msg + (i * 64)));
+		sha256_round(&sha);
 	}
 	ft_free(sha.msg);
 	ssl->ou_size = 28;

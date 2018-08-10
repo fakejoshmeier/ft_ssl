@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 21:53:20 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/10 15:07:01 by josh             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,7 @@ void				file_out(t_ssl *ssl, char *out);
 */
 
 uint64_t			b_endian64(uint64_t num);
+uint32_t			b_endian32(uint32_t num);
 int					check_endianness(void);
 
 /*
@@ -203,10 +204,9 @@ void				sha256_init(t_sha *sha);
 void				sha256_init1(t_sha *sha);
 void				sha256_init2(t_sha *sha);
 void				sha256_bits(t_sha *sha, t_ssl *ssl, char *input);
-void				sha256_words(t_sha *sha, size_t *j);
-void				sha256_var_init(t_sha *sha);
+void				sha256_words(t_sha *sha, uint8_t *msg);
+void				sha256_round(t_sha *sha);
 void				sha256_algo(t_sha *sha);
-void				sha256_add_chunk(t_sha *sha);
 char				*sha256_out(t_sha *sha);
 
 /*
