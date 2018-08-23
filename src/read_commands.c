@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 22:26:46 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 00:09:28 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 02:41:42 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,32 +45,14 @@ int		read_commands1(char **av, t_ssl *ssl)
 		strike(ssl, message_digest, sha512_exe, md_flags);
 	}
 	else if (ft_strequ(*av, "base64"))
-	{
-		primer(ssl, "BASE64", "base64");
 		strike(ssl, cipher, base64_exe, b64_flags);
-	}/*
-	else if (ft_strequ(*av, "des"))
-	{
-		ssl->cmd = des;
-		ssl->exe = des;
-		primer(ssl, "DES", "des", DES_FLAGS)
-	}
+//	else if (ft_strequ(*av, "des"))
+//		strike(ssl, cipher, des_exe, des_flags);
+/*
 	else if (ft_strequ(*av, "des-ecb"))
-	{
-		ssl->cmd = des-ecb;
-		ssl->exe = des-ecb;
-		primer = (ssl, "DES-ECB", "des-ecb", DES_FLAGS)
-	}
-	return (ssl->exe ? 1 : read_commands2(av, ssl));
-}
-
-int		read_commands2(char **av, t_ssl *ssl)
-{
-	if (ft_strequ(*av, "des-cbc"))
-	{
-		ssl->cmd = des-cbc;
-		ssl->exe = des-cbc;
-		primer(ssl, "DES-CBC", "des-cbc", DES_FLAGS);
+		strike(ssl, cipher, des_exe, des_flags);
+	else if (ft_strequ(*av, "des-cbc"))
+		strike(ssl, cipher, des_exe, des_flags);
 	}*/
 	return (ssl->exe ? 1 : 0);
 }

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 01:54:30 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 02:59:31 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,9 +148,14 @@ typedef struct		s_ssl
 {
 	size_t			in_size;
 	size_t			ou_size;
+	char			*user_pass;
+	char			*user_salt;
+	char			*user_key;
+	char			*user_iv;
 	char			*stdin_input;
 	char			**file_in;
 	char			*filename;
+	char			*ou_file;
 	int				file_tot;
 	char			**str_in;
 	char			*str_curr;
@@ -158,7 +163,6 @@ typedef struct		s_ssl
 	int				run;
 	char			*cmd__;
 	char			*cmd_;
-	char			*ou_file;
 	t_flag			*flag;
 	t_md5			*md5;
 	void			(*cmd)(struct s_ssl *);
@@ -202,6 +206,7 @@ void				file_out(t_ssl *ssl, char *out);
 
 t_flag				*md_flags(char ***av, t_ssl *ssl);
 t_flag				*b64_flags(char ***av, t_ssl *ssl);
+t_flag				*des_flags(char ***av, t_ssl *ssl);
 
 /*
 ** Endian functions

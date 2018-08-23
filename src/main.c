@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 01:51:03 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 03:04:13 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 void	ft_error(char *str, int i)
 {
-	if (i == 1)
-		ft_putendl(str);
-	if (i == 2)
+	MATCH(i == 1, ft_putendl(str));
+	else if (i == 2)
 	{
 		ft_printf("ft_ssl: Error: '%s' is an invalid command.\n\n", str);
 		ft_putendl("Standard commands:\n");
@@ -24,17 +23,16 @@ void	ft_error(char *str, int i)
 		ft_putendl("sha512\n");
 		ft_putendl("Cipher commands:\nbase64\ndes\ndes-ecb\ndes-cbc");
 	}
-	if (i == 3)
+	else if (i == 3)
 	{
 		ft_printf("unknown option '%s'\noptions are\n-p\techo STDIN to ", str);
 		ft_printf("STDOUT and append the checksum to STDOUT\n-q\tquiet mode");
 		ft_printf("\n-r\treverse the format of the output\n-s\tprint the sum");
 		ft_putendl(" of the given string");
 	}
-	if (i == 4)
-		ft_printf("ft_ssl: Unable to open/create file %s\n", str);
-	if (i == 5)
-		ft_printf("ft_ssl: Unable to write to file %s\n", str);
+	OR(i == 4, ft_printf("ft_ssl: Unable to open/create file %s\n", str));
+	OR(i == 5, ft_printf("ft_ssl: Unable to write to file %s\n", str));
+	OR(i == 6, ft_printf("ft_ssl: %s - Invalid flag option\n", str));
 	exit(1);
 }
 
