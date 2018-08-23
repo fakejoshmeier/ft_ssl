@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 22:26:46 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 21:51:23 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 02:41:42 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,23 @@ int		read_commands(char **av, t_ssl *ssl)
 {
 	if (ft_strequ(*av, "md5"))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = md5_exe;
-		primer(ssl, "MD5", "md5", MESSAGE_DIGEST_FLAGS);
+		primer(ssl, "MD5", "md5");
+		strike(ssl, message_digest, md5_exe, md_flags);
 	}
 	else if (ft_strequ(*av, "sha224"))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = sha224_exe;
-		primer(ssl, "SHA224", "sha224", MESSAGE_DIGEST_FLAGS);
+		primer(ssl, "SHA224", "sha224");
+		strike(ssl, message_digest, sha224_exe, md_flags);
 	}
 	else if (ft_strequ(*av, "sha256"))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = sha256_exe;
-		primer(ssl, "SHA256", "sha256", MESSAGE_DIGEST_FLAGS);
+		primer(ssl, "SHA256", "sha256");
+		strike(ssl, message_digest, sha256_exe, md_flags);
 	}
 	else if (ft_strequ(*av, "sha384"))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = sha384_exe;
-		primer(ssl, "SHA384", "sha384", MESSAGE_DIGEST_FLAGS);
+		primer(ssl, "SHA384", "sha384");
+		strike(ssl, message_digest, sha384_exe, md_flags);
 	}
 	return (ssl->exe ? 1 : read_commands1(av, ssl));
 }
@@ -45,16 +41,32 @@ int		read_commands1(char **av, t_ssl *ssl)
 {
 	if (ft_strequ(*av, "sha512"))
 	{
-		ssl->cmd = message_digest;
-		ssl->exe = sha512_exe;
-		primer(ssl, "SHA512", "sha512", MESSAGE_DIGEST_FLAGS);
+		primer(ssl, "SHA512", "sha512");
+		strike(ssl, message_digest, sha512_exe, md_flags);
 	}
+	else if (ft_strequ(*av, "base64"))
+		strike(ssl, cipher, base64_exe, b64_flags);
+//	else if (ft_strequ(*av, "des"))
+//		strike(ssl, cipher, des_exe, des_flags);
+/*
+	else if (ft_strequ(*av, "des-ecb"))
+		strike(ssl, cipher, des_exe, des_flags);
+	else if (ft_strequ(*av, "des-cbc"))
+		strike(ssl, cipher, des_exe, des_flags);
+	}*/
 	return (ssl->exe ? 1 : 0);
 }
 
-void	primer(t_ssl *ssl, char *op, char *op_, char *flags)
+void	primer(t_ssl *ssl, char *op, char *op_)
 {
 	ssl->cmd__ = op;
 	ssl->cmd_ = op_;
-	ssl->valid_flags = flags;
+}
+
+void	strike(t_ssl *ssl, void (*c)(t_ssl *), char *(*e)(t_ssl *, char *),
+		t_flag *(*f)(char ***, t_ssl *))
+{
+	ssl->cmd = c;
+	ssl->exe = e;
+	ssl->fla = f;
 }

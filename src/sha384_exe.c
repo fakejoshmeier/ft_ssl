@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 21:42:02 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/28 21:49:46 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 03:06:23 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	sha384_init(t_s512 *sha)
 
 char	*sha384_out(t_s512 *sha)
 {
-		t_u64			u;
+	t_u64			u;
 	char			*ret;
 	char			*str;
 	int				i;

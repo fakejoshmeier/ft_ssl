@@ -6,59 +6,33 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/07/31 02:15:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 03:04:13 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-t_flag	*read_flags(char ***av, char *valid, t_ssl *ssl)
-{
-	t_flag	*f;
-	int		i;
-
-	f = (t_flag *)ft_memalloc(sizeof(t_flag));
-	i = 0;
-	while (**av && **av[0] == '-')
-	{
-		if (ft_strequ(**av, "-s") && ft_strstr(valid, "-p"))
-		{
-			f->s = 1;
-			(*av)++;
-			ssl->str_in = (char **)ft_realloc(ssl->str_in, (sizeof(char *) *
-				(i + 1)));
-			ssl->str_in[i++] = **av;
-			ssl->str_tot = i;
-		}
-		OR(ft_strequ("-p", **av) && ft_strstr(valid, "-p"), f->p = 1);
-		OR(ft_strequ("-q", **av) && ft_strstr(valid, "-q"), f->q = 1);
-		OR(ft_strequ("-r", **av) && ft_strstr(valid, "-r"), f->r = 1);
-		OTHERWISE(ft_error(**av, 3));
-		(*av)++;
-	}
-	MATCH(**av, ssl->file_in = *av);
-	return (f);
-}
-
 void	ft_error(char *str, int i)
 {
-	if (i == 1)
-		ft_putendl(str);
-	if (i == 2)
+	MATCH(i == 1, ft_putendl(str));
+	else if (i == 2)
 	{
 		ft_printf("ft_ssl: Error: '%s' is an invalid command.\n\n", str);
 		ft_putendl("Standard commands:\n");
 		ft_putendl("Message Digest commands:\nmd5\nsha224\nsha256\nsha384");
 		ft_putendl("sha512\n");
-		ft_putendl("Cipher commands:");
+		ft_putendl("Cipher commands:\nbase64\ndes\ndes-ecb\ndes-cbc");
 	}
-	if (i == 3)
+	else if (i == 3)
 	{
 		ft_printf("unknown option '%s'\noptions are\n-p\techo STDIN to ", str);
 		ft_printf("STDOUT and append the checksum to STDOUT\n-q\tquiet mode");
 		ft_printf("\n-r\treverse the format of the output\n-s\tprint the sum");
 		ft_putendl(" of the given string");
 	}
+	OR(i == 4, ft_printf("ft_ssl: Unable to open/create file %s\n", str));
+	OR(i == 5, ft_printf("ft_ssl: Unable to write to file %s\n", str));
+	OR(i == 6, ft_printf("ft_ssl: %s - Invalid flag option\n", str));
 	exit(1);
 }
 
@@ -73,9 +47,13 @@ int		main(int ac, char *av[])
 	if (!read_commands(av, &ssl))
 		ft_error(*av, 2);
 	av += 1;
-	ssl.flag = read_flags(&av, ssl.valid_flags, &ssl);
+	ssl.flag = ssl.fla(&av, &ssl);
 	ssl.cmd(&ssl);
 	free(ssl.flag);
+//	ssl.flag = (t_flag *)ft_memalloc(sizeof(t_flag));
+//	printf("%s\n", base64_exe(&ssl, "foobar"));
+//	ssl.flag->d = 1;
+//	printf("%s\n", base64_exe(&ssl, "SnVnZW11IEp1Z2VtdSBHb2tvLW5vIHN1c\nmlraXJlIEthaWphcmlzdWlneW8tbm8gU3VpZ3lv\nbWF0c3UgVW5yYWltYXRzdSBGdXJhaW1hdHN1IEt1dW5lcnV0b2tvcm8tbmkgU3VtdXRva29ybyBZYWJ1cmFrb2ppLW5vIGJ1cmFrb2ppIFBhaXBvcGFpcG8gUGFpcG8tbm8tc2h1cmluZ2FuIFNodXJpbmdhbi1ubyBHdXJpbmRhaSBHdXJpbmRhaS1ubyBQb25wb2tvcGktbm8gUG9ucG9rb25hLW5vIENob2t5dW      1laS1ubyBDaG9zdWtl"));
 	ssl.flag = NULL;
 	return (0);
 }
