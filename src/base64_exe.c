@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 11:59:21 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/22 18:42:29 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 01:52:46 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ char	*base64_exe(t_ssl *ssl, char *in)
 	int		len;
 	int		ret_len;
 
+	len = ssl->in_size;
 	if (ssl->flag->d)
 	{
-		len = ft_strlen(in);
-		tmp = newline_trim(in, &len);
+		tmp = whitespace_trim(in, &len);
 		ret_len = 3 * (len / 4);
 		tmp[len - 1] == '=' ? --ret_len : 0;
 		tmp[len - 2] == '=' ? --ret_len : 0;
@@ -31,12 +31,12 @@ char	*base64_exe(t_ssl *ssl, char *in)
 	}
 	else
 	{
-		len = ft_strlen(in);
 		ret_len = 4 * ((len + 2) / 3);
 		ret_len += ret_len >= 64 ? (ret_len % 64) : 0;
 		NULL_GUARD(ret = ft_strnew(ret_len));
 		base64_encode(in, len, ret, ret_len);
 	}
+	ssl->ou_size = ret_len;
 	return (ret);
 }
 
@@ -73,6 +73,14 @@ void	base64_encode(char *in, int len, char *ret, int ret_len)
 	ret[ret_len - 2] = !b.out_b ? '=' : ret[ret_len - 2];
 }
 
+/*
+** Okay, same deal as the encode.  Every 4 letters becomes a letter
+** corresponding to the key.  They all get OR'd into a 24 bit number
+** and that number is chopped and screwed into chunks of three that
+** coincidentally become ascii values for chars.  Also, made sure to
+** trim for any sort of whitespace in the input.
+*/
+
 char	*base64_decode(char *in, int len, int ret_len)
 {
 	t_b64	b;
@@ -99,7 +107,7 @@ char	*base64_decode(char *in, int len, int ret_len)
 	return (ret);
 }
 
-char	*newline_trim(char *in, int *len)
+char	*whitespace_trim(char *in, int *len)
 {
 	char	*ret;
 	int		i;
@@ -110,7 +118,7 @@ char	*newline_trim(char *in, int *len)
 	j = 0;
 	while (j < *len)
 	{
-		if (in[j] == '\n')
+		if (ft_isspace(in[j]))
 			j++;
 		else
 			ret[i++] = in[j++];
