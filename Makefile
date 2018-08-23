@@ -6,7 +6,7 @@
 #    By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/14 16:30:04 by jmeier            #+#    #+#              #
-#    Updated: 2018/07/28 21:52:51 by jmeier           ###   ########.fr        #
+#    Updated: 2018/08/21 23:47:30 by jmeier           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = ft_ssl
 
 FUNC = main md5_exe md5_init sha256_algo sha256_exe sha256_init endian \
 input message_digest read_commands print sha224_exe sha512_init sha512_exe \
-sha512_algo sha384_exe
+sha512_algo sha384_exe base64_exe
 
 C_LOC = src/
 C_NAM = $(addsuffix .c, $(FUNC))
