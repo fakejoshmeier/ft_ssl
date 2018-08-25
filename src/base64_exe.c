@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 11:59:21 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 01:52:46 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/23 21:19:40 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ void	base64_encode(char *in, int len, char *ret, int ret_len)
 	int			j;
 
 	key = B64;
-	b.san = 0;
+	b.iter = 0;
 	j = -1;
-	while (b.san < len)
+	while (b.iter < len)
 	{
 		i = -1;
-		b.out_a = b.san < len ? (int)in[b.san++] : 0;
-		b.out_b = b.san < len ? (int)in[b.san++] : 0;
-		b.out_c = b.san < len ? (int)in[b.san++] : 0;
+		b.out_a = b.iter < len ? (int)in[b.iter++] : 0;
+		b.out_b = b.iter < len ? (int)in[b.iter++] : 0;
+		b.out_c = b.iter < len ? (int)in[b.iter++] : 0;
 		b.out_d = (b.out_a << 16) | (b.out_b << 8) | b.out_c;
 		while (++i < 4)
 			ret[++j] = key[(b.out_d >> (18 - (6 * i))) & 0x3f];
@@ -91,14 +91,14 @@ char	*base64_decode(char *in, int len, int ret_len)
 
 	NULL_GUARD(t = decrypt_ref_table());
 	NULL_GUARD(ret = ft_strnew(ret_len));
-	b.yon = 0;
+	b.iter = 0;
 	c = -1;
-	while (b.yon < len)
+	while (b.iter < len)
 	{
-		b.out_a = in[b.yon] != '=' ? t[(int)in[b.yon++]] : 0 & ++b.yon;
-		b.out_b = in[b.yon] != '=' ? t[(int)in[b.yon++]] : 0 & ++b.yon;
-		b.out_c = in[b.yon] != '=' ? t[(int)in[b.yon++]] : 0 & ++b.yon;
-		b.out_d = in[b.yon] != '=' ? t[(int)in[b.yon++]] : 0 & ++b.yon;
+		b.out_a = in[b.iter] != '=' ? t[(int)in[b.iter++]] : 0 & ++b.iter;
+		b.out_b = in[b.iter] != '=' ? t[(int)in[b.iter++]] : 0 & ++b.iter;
+		b.out_c = in[b.iter] != '=' ? t[(int)in[b.iter++]] : 0 & ++b.iter;
+		b.out_d = in[b.iter] != '=' ? t[(int)in[b.iter++]] : 0 & ++b.iter;
 		b.out_e = (b.out_a << 18) + (b.out_b << 12) + (b.out_c << 6) + b.out_d;
 		i = -1;
 		while (++i < 3 && ++c < ret_len)

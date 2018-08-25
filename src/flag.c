@@ -6,16 +6,38 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 20:47:11 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 03:07:36 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/24 20:11:14 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-void	set_val(char ***arg, char **value, unsigned int *flag)
+void	set_val(char ***arg, char **value, unsigned int *flag, int len)
 {
+	char	*tmp;
+	int		i;
+	int		j;
+
 	(*arg)++;
-	*value = **arg;
+	MATCH(!(*arg), ft_error("ft_ssl: no arg for flag that requires arg", 1));
+	if (len)
+	{
+		tmp = ft_strnew(len);
+		i = ft_strlen(**arg);
+		j = 0;
+		ft_strncpy(tmp, **arg, i < len ? i : len);
+		if (len == 16)
+		{
+			while (j < (i < len ? i : len))
+				MATCH(!ft_ishex(tmp[j++]), ft_error("Invalid Key/IV/Salt", 1));
+			ft_strtoupper(&tmp);
+		}
+		while (i < len)
+			tmp[i++] = '0';
+		*value = tmp;
+	}
+	else
+		*value = **arg;
 	*flag = 1;
 }
 
@@ -24,7 +46,7 @@ t_flag	*md_flags(char ***av, t_ssl *ssl)
 	t_flag	*f;
 	int		i;
 
-	f = (t_flag *)ft_memalloc(sizeof(t_flag));
+	NULL_GUARD(f = (t_flag *)ft_memalloc(sizeof(t_flag)));
 	i = 0;
 	while (**av && **av[0] == '-')
 	{
@@ -32,7 +54,7 @@ t_flag	*md_flags(char ***av, t_ssl *ssl)
 		{
 			ssl->str_in = (char **)ft_realloc(ssl->str_in, (sizeof(char *) *
 				(i + 1)));
-			set_val(av, &(ssl->str_in[i]), &(f->s));
+			set_val(av, &(ssl->str_in[i]), &(f->s), 0);
 			ssl->str_tot = ++i;
 		}
 		OR(ft_strequ("-p", **av), f->p = 1);
@@ -50,15 +72,15 @@ t_flag	*b64_flags(char ***av, t_ssl *ssl)
 	t_flag	*f;
 	int		i;
 
-	f = (t_flag *)ft_memalloc(sizeof(t_flag));
+	NULL_GUARD(f = (t_flag *)ft_memalloc(sizeof(t_flag)));
 	i = 0;
-	while (**av && **av[0] == '-')
+	while (**av)
 	{
 		MATCH(ft_strequ("-d", **av), f->d = 1);
 		OR(ft_strequ("-e", **av), f->e = 1);
-		OR(ft_strequ("-i", **av), set_val(av, &(ssl->filename), &(f->i)));
-		OR(ft_strequ("-o", **av), set_val(av, &(ssl->ou_file), &(f->o)));
-
+		OR(ft_strequ("-i", **av), set_val(av, &(ssl->filename), &(f->i), 0));
+		OR(ft_strequ("-o", **av), set_val(av, &(ssl->ou_file), &(f->o), 0));
+		OTHERWISE(ft_error(**av, 7));
 		(*av)++;
 	}
 	return (f);
@@ -67,24 +89,22 @@ t_flag	*b64_flags(char ***av, t_ssl *ssl)
 t_flag	*des_flags(char ***av, t_ssl *ssl)
 {
 	t_flag	*f;
-	char	***tmp;
 	int		i;
 
-	tmp = av;
-	f = b64_flags(av, ssl);
-	av = tmp;
+	NULL_GUARD(f = (t_flag *)ft_memalloc(sizeof(t_flag)));
 	i = 0;
-	while (**av && **av[0] == '-')
+	while (**av)
 	{
-		MATCH(ft_strequ("-a", **av), f->a = 1);
-		OR(ft_strequ("-d", **av), f->d = 1);
-		OR(ft_strequ("-e", **av), f->e = 1);
-		OR(ft_strequ("-i", **av), set_val(av, &(ssl->filename), &(f->i)));
-		OR(ft_strequ("-k", **av), set_val(av, &(ssl->user_key), &(f->k)));
-		OR(ft_strequ("-o", **av), set_val(av, &(ssl->ou_file), &(f->o)));
-		OR(ft_strequ("-p", **av), set_val(av, &(ssl->user_pass), &(f->p)));
-		OR(ft_strequ("-s", **av), set_val(av, &(ssl->user_salt), &(f->s)));
-		OR(ft_strequ("-v", **av), set_val(av, &(ssl->user_iv), &(f->v)));
+		MATCH(SE("-a", **av), f->a = 1);
+		OR(SE("-d", **av), f->d = 1);
+		OR(SE("-e", **av), f->e = 1);
+		OR(SE("-i", **av), set_val(av, &(ssl->filename), &(f->i), 0));
+		OR(SE("-k", **av), set_val(av, &(ssl->user_key), &(f->k), 16));
+		OR(SE("-o", **av), set_val(av, &(ssl->ou_file), &(f->o), 0));
+		OR(SE("-p", **av), set_val(av, &(ssl->user_pass), &(f->p), 32));
+		OR(SE("-s", **av), set_val(av, &(ssl->user_salt), &(f->s), 16));
+		OR(SE("-v", **av), set_val(av, &(ssl->user_iv), &(f->v), 16));
+		OTHERWISE(ft_error(**av, 8));
 		(*av)++;
 	}
 	return (f);
