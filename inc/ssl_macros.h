@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 23:31:51 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 03:41:24 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/25 07:44:36 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,8 +130,10 @@
 # define MD5_F2(b, c, d) ((d & b) | ((~d) & c))
 # define MD5_F3(b, c, d) (b ^ c ^ d)
 # define MD5_F4(b, c, d) (c ^ (b | (~d)))
+
 # define LEFT_ROT(x, c) ((x << c) | (x >> (32 - c)))
 # define RITE_ROT(x, c) ((x >> c) | (x << (32 - c)))
 # define S512_ROT(x, c) ((x >> c) | (x << (64 - c)))
+# define DES_ROT(a, b) (((a << b) | (a >> (28 - b))) & 0xFFFFFFF)
 
 #endif
