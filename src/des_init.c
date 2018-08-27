@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 08:29:56 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/25 21:34:49 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,25 @@ void		des_init(t_des *des)
 
 void		des_pbkdf(t_ssl *ssl, t_des *des)
 {
-	uint64_t	s;
 	char		*tmp;
 	char		*out;
 	int			i;
 
 	if (!ssl->user_pass && (!ssl->user_key || !ssl->user_iv))
 	{
-		tmp = getpass("Enter password:");
+		tmp = getpass("Enter encryption password:");
 		ssl->user_pass = ft_strnew(32);
 		ft_memcpy(ssl->user_pass, tmp, (i = ft_strlen(tmp)) <= 32 ? i : 32);
+		ft_bzero(tmp, i);
+		if (!ft_strnequ(ssl->user_pass,
+			(tmp = getpass("Reenter for confirmation:")), i <= 32 ? i : 32))
+			ft_error("Password confirmation failed.  Exiting.", 1);
 		ft_bzero(tmp, i);
 		while (i < 32)
 			ssl->user_pass[i++] = '0';
 		MATCH(!ssl->user_salt, ssl->user_salt = random_hex_str(16));
-		s = hex_str_to_64bit(ssl->user_salt);
-		out = append_hash_repeat(ssl->user_pass, s);
+		des->nacl = hex_str_to_64bit(ssl->user_salt);
+		out = append_hash_repeat(ssl->user_pass, des->nacl);
 		ft_strtoupper(&out);
 		MATCH(!ssl->user_key, ssl->user_key = ft_strndup(out, 16));
 		MATCH(!ssl->user_iv, ssl->user_iv = ft_strndup(&out[16], 16));

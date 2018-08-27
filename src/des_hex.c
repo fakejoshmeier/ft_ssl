@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 04:54:33 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 08:31:44 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/26 10:38:22 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ char		*str_to_hex(char *s)
 	if ((len = ft_strlen(s)) == 0)
 		return (0);
 	len *= 2;
-	if (!(hex_string = malloc(len + 1)))
-		return (0);
+	if (!(hex_string = ft_strnew(len)))
+		return (NULL);
 	i = 0;
 	hex = "0123456789ABCDEF";
 	while (i < len)
@@ -32,7 +32,6 @@ char		*str_to_hex(char *s)
 		hex_string[i++] = hex[(*s) & 0xF];
 		++s;
 	}
-	hex_string[i] = '\0';
 	return (hex_string);
 }
 
@@ -94,4 +93,26 @@ uint64_t	hex_str_to_64bit(char *s)
 			++s;
 	}
 	return (ret);
+}
+
+uint64_t	des_ecb_str_to_64bit(char **input)
+{
+	uint8_t			i;
+	uint64_t	message;
+	uint64_t	remaining;
+
+	i = -1;
+	message = 0;
+	while (++i < 8 && **input)
+	{
+		message |= ((uint64_t)(**input) << (56 - (i * 8)));
+		++(*input);
+	}
+	remaining = 8 - i;
+	while (i < 8)
+	{
+		message |= (remaining << (56 - (i * 8)));
+		++i;
+	}
+	return (message);
 }

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 11:59:21 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 04:55:24 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/26 01:26:56 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,27 @@ char	*base64_exe(t_ssl *ssl, char *in)
 {
 	char	*ret;
 	char	*tmp;
-	int		len;
 	int		ret_len;
 
-	len = ssl->in_size;
 	if (ssl->flag->d)
 	{
-		tmp = whitespace_trim(in, &len);
-		ret_len = 3 * (len / 4);
-		tmp[len - 1] == '=' ? --ret_len : 0;
-		tmp[len - 2] == '=' ? --ret_len : 0;
-		ret = base64_decode(tmp, len, ret_len);
+		tmp = whitespace_trim(in, &(ssl->in_size));
+		ret_len = 3 * (ssl->in_size / 4);
+		tmp[ssl->in_size - 1] == '=' ? --ret_len : 0;
+		tmp[ssl->in_size - 2] == '=' ? --ret_len : 0;
+		ret = base64_decode(tmp, ssl->in_size, ret_len);
 		free(tmp);
 	}
 	else
 	{
-		ret_len = 4 * ((len + 2) / 3);
+		ret_len = 4 * ((ssl->in_size + 2) / 3);
 		ret_len += ret_len >= 64 ? (ret_len % 64) : 0;
 		NULL_GUARD(ret = ft_strnew(ret_len));
-		base64_encode(in, len, ret, ret_len);
+		base64_encode(in, ssl->in_size, ret, ret_len);
 	}
 	ssl->in_size = ret_len;
 	ssl->ou_size = ret_len;
+	free(in);
 	return (ret);
 }
 
@@ -108,11 +107,11 @@ char	*base64_decode(char *in, int len, int ret_len)
 	return (ret);
 }
 
-char	*whitespace_trim(char *in, int *len)
+char	*whitespace_trim(char *in, size_t *len)
 {
 	char	*ret;
-	int		i;
-	int		j;
+	size_t	i;
+	size_t	j;
 
 	NULL_GUARD((ret = ft_memalloc(*len + 3)));
 	i = 0;

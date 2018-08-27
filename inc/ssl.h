@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 08:22:31 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/26 01:21:02 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct		s_b64
 
 typedef struct		s_des
 {
+	uint64_t		nacl;
 	uint64_t		key;
 	uint32_t		l[16];
 	uint32_t		r[16];
@@ -286,7 +287,7 @@ char				*sha512_out(t_s512 *sha);
 char				*base64_exe(t_ssl *ssl, char *in);
 void				base64_encode(char *in, int len, char *ret, int ret_len);
 char				*base64_decode(char *in, int len, int ret_len);
-char				*whitespace_trim(char *in, int *len);
+char				*whitespace_trim(char *in, size_t *len);
 int					*decrypt_ref_table(void);
 
 /*
@@ -297,13 +298,15 @@ void				des_init(t_des *des);
 void				des_pbkdf(t_ssl *ssl, t_des *des);
 void				des_subkeys(t_des *des, unsigned int r);
 uint64_t			perm_choice(uint64_t key, int *pc, int size);
-char				*des_ecb_exe(t_ssl *ssl, char *in);
+char				*ecb_exe(t_ssl *ssl, char *in);
+char				*des_pad(char **in, size_t *len);
 
-
+void				des_clean(t_ssl *ssl, t_des *des);
 char				*append_hash_repeat(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
 char				*random_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
+void				extract_salt(t_ssl *ssl, t_des *des, char *in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			blender(char *key);
 
