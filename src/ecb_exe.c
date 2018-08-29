@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/26 10:37:00 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 03:22:07 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,31 +28,41 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 	}
 	if (!ssl->flag->d)
 		des_pad(&in, &(ssl->in_size));
-//	ret = ssl->flag->d ? ecb_decode(ssl, &des, in) : ecb_encode(ssl, &des, in);
-	printf("Password:%s\nSalt:%s\nKey:%s\nIV:%s\n", ssl->user_pass,
-		ssl->user_salt, ssl->user_key, ssl->user_iv);
+//	ret = ssl->flag->d ? ecb_decode(ssl, &des, in) : 0; //ecb_encode(ssl, &des, in);
+	if (!ssl->flag->d)
+		ret = ecb_encode(&des, ssl, in);
+	else
+		ret = ft_strdup(in);
+//	printf("Password:%s\nSalt:%s\nKey:%s\nIV:%s\n", ssl->user_pass,
+//		ssl->user_salt, ssl->user_key, ssl->user_iv);
 	free(in);
 	des_clean(ssl, &des);
 	return (ret);
 }
-/*
+
 char		*ecb_encode(t_des *des, t_ssl *ssl, char *in)
 {
 	char		*salted;
 	char		*ret;
+	char		*tmp;
 
+	des_subkeys(des, ssl->flag->d);
 	salted = ft_strnew(16);
-	salted = "Salted__";
-	ft_memcpy(&salted[8], &(des->nacl));
-
+	ft_memcpy(salted, "Salted__", 8);
+	ft_memcpy(&salted[8], &(des->nacl), 8);
+	ret = des_algo(in, ssl, des);
 	if (ssl->flag->a)
 	{
-		ret = base64_exe(ssl, in);
-		ssl->in_size = ssl->ou_size;
+		tmp = base64_exe(ssl, ret);
+		free(ret);
+		ret = tmp;
 	}
+	tmp = ft_strfjoin(salted, ret);
+	free(ret);
+	ret = tmp;
 	return (ret);
 }
-*/
+
 /*
  * So the thing is that des will have the salt as part of the output after the
  * input gets encrypted, so I can't *quite* create a random salt.  Actually,

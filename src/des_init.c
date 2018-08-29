@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 21:34:49 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 03:13:45 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ void		des_init(t_des *des)
 	GET_S6;
 	GET_S7;
 	GET_S8;
-	des->p_table = ft_atoi_arr(P_TABLE);
+	des->p = ft_atoi_arr(P_TABLE);
+	des->fp = ft_atoi_arr(FP);
 }
 
 /*
@@ -67,13 +68,19 @@ void		des_pbkdf(t_ssl *ssl, t_des *des)
 	des->key = blender(ssl->user_key);
 }
 
+/*
+** The DES algorithm is the same for decrypting as it is encrypting, but the
+** final permutation is applied to the key in reverse.  Thanks to the magic of
+** math and indices, it's not too difficult to do.
+*/
+
 void		des_subkeys(t_des *des, unsigned int r)
 {
 	uint64_t	kp;
 	int			i;
 	int			j;
 
-	kp = perm_choice(des->key, des->pc1, 56);
+	kp = permute_key_by_x_for_y(des->key, des->pc1, 56);
 	des->l[0] = DES_ROT((kp >> 28), des->shifts[0]);
 	des->r[0] = DES_ROT((kp & 0xfffffff), des->shifts[0]);
 	i = 0;
@@ -87,11 +94,16 @@ void		des_subkeys(t_des *des, unsigned int r)
 	{
 		j = !r ? i : 15 - i;
 		kp = ((uint64_t)des->l[i] << 28) | (uint64_t)des->r[i];
-		des->subkey[j] = perm_choice(kp, des->pc2, 48);
+		des->subkey[j] = permute_key_by_x_for_y(kp, des->pc2, 48);
 	}
 }
 
-uint64_t	perm_choice(uint64_t key, int *pc, int size)
+/*
+** In the examples I've read, it appears that the algorithm runs on a little
+** endian looking interpretation.  Hence why I shift by 64 - x, rather than x.
+*/
+
+uint64_t	permute_key_by_x_for_y(uint64_t key, int *pc, int size)
 {
 	uint64_t	ret;
 	int			i;
@@ -99,7 +111,6 @@ uint64_t	perm_choice(uint64_t key, int *pc, int size)
 	i = -1;
 	ret = 0;
 	while (++i < size)
-		ret |= (key >> (((size + 8) > 64 ? 64 : size + 8) - pc[i] & 1)) <<
-			(size - (i + 1));
+		ret |= (key >> (MIN(size + 8, 64) - pc[i]) & 1) << (size - (i + 1));
 	return (ret);
 }

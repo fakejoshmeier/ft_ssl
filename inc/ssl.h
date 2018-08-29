@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/26 01:21:02 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 03:06:26 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ typedef struct		s_des
 	int				*init_perm;
 	int				*ebit;
 	int				*s[8][4];
-	int				*p_table;
-	int				*inverse_table;
+	int				*p;
+	int				*fp;
 }					t_des;
 
 typedef struct		s_sha
@@ -297,17 +297,23 @@ int					*decrypt_ref_table(void);
 void				des_init(t_des *des);
 void				des_pbkdf(t_ssl *ssl, t_des *des);
 void				des_subkeys(t_des *des, unsigned int r);
-uint64_t			perm_choice(uint64_t key, int *pc, int size);
+uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
 char				*ecb_exe(t_ssl *ssl, char *in);
+char				*ecb_encode(t_des *des, t_ssl *ssl, char *in);
+char				*ecb_decode(t_des *des, t_ssl *ssl, char *in);
 char				*des_pad(char **in, size_t *len);
-
+char				*des_algo(char *in, t_ssl *ssl, t_des *des);
+uint64_t			process_msg(t_des *Des, uint64_t);
+uint32_t			des_f(t_des *des, uint32_t blk, uint64_t key);
 void				des_clean(t_ssl *ssl, t_des *des);
+
 char				*append_hash_repeat(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
 char				*random_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
 void				extract_salt(t_ssl *ssl, t_des *des, char *in);
 uint64_t			hex_str_to_64bit(char *s);
+uint64_t			des_str_to_64bit(char **in);
 uint64_t			blender(char *key);
 
 #endif
