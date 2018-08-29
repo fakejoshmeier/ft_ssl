@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/26 00:43:27 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 01:57:38 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ void		des_clean(t_ssl *ssl, t_des *des)
 		while (++j < 4)
 			free(des->s[i][j]);
 	}
-	free(des->p_table);
-//	free(des->inverse_table);
+	free(des->p);
+	free(des->fp);
 }
 
 void	extract_salt(t_ssl *ssl, t_des *des, char *in)

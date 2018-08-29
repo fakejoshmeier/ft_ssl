@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 20:47:11 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/24 20:11:14 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 03:11:39 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,8 @@ t_flag	*md_flags(char ***av, t_ssl *ssl)
 t_flag	*b64_flags(char ***av, t_ssl *ssl)
 {
 	t_flag	*f;
-	int		i;
 
 	NULL_GUARD(f = (t_flag *)ft_memalloc(sizeof(t_flag)));
-	i = 0;
 	while (**av)
 	{
 		MATCH(ft_strequ("-d", **av), f->d = 1);
@@ -89,10 +87,8 @@ t_flag	*b64_flags(char ***av, t_ssl *ssl)
 t_flag	*des_flags(char ***av, t_ssl *ssl)
 {
 	t_flag	*f;
-	int		i;
 
 	NULL_GUARD(f = (t_flag *)ft_memalloc(sizeof(t_flag)));
-	i = 0;
 	while (**av)
 	{
 		MATCH(SE("-a", **av), f->a = 1);

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 04:54:33 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/26 10:38:22 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 01:20:35 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,9 @@ uint64_t	hex_str_to_64bit(char *s)
 	return (ret);
 }
 
-uint64_t	des_ecb_str_to_64bit(char **input)
+uint64_t	des_str_to_64bit(char **input)
 {
-	uint8_t			i;
+	uint8_t		i;
 	uint64_t	message;
 	uint64_t	remaining;
 

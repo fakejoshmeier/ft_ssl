@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/27 16:47:07 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/29 03:08:41 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,41 +31,84 @@ char		*des_pad(char **in, size_t *len)
 	return (*in);
 }
 
-unsigned char	*set_block(char *str, int i, int len)
+uint64_t	process_msg(t_des *des, uint64_t msg)
 {
-	unsigned char	*ret;
-	int				j;
+	uint64_t	left;
+	uint64_t	rite;
+	uint64_t	ret;
+	int			i;
 
-	ret = (unsigned char *)ft_strnew(8);
-	if (len - i >= 8)
-		ft_memcpy(ret, &str[i], 8);
-	else
+	des->init_perm_ret = permute_key_by_x_for_y(msg, des->init_perm, 64);
+	left = des->init_perm_ret >> 32;
+	rite = des->init_perm_ret & 0xffffffff;
+	des->l[0] = rite;
+	des->r[0] = left ^ des_f(des, rite, des->subkey[0]);
+	i = 0;
+	while (++i < 16)
 	{
-		ft_memcpy(ret, &str[i], len - i);
-		j = 8;
-		while (--j >= (len - i))
-			ret[j] = 8 - (len - i);
+		des->l[i] = des->r[i - 1];
+		des->r[i] = des->l[i - 1] ^ des_f(des, des->r[i - 1], des->subkey[i]);
 	}
+	ret = ((uint64_t)des->r[15] << 32) | (uint64_t)des->l[15];
+	return (permute_key_by_x_for_y(ret, des->fp, 64));
+}
+
+/*
+** Expand what was once a 32 bit number to a 48 bit number with the ebit
+** selection table.  Now every six bits, I play around with the bits to get a
+** row and column in one of eight s-boxes.  Each box has a four bit number at
+** each index, which replaces the six bit number, shrinking the output from 48
+** to 32 bits.
+*/
+
+uint32_t	des_f(t_des *des, uint32_t blk, uint64_t key)
+{
+	uint64_t	xor;
+	uint32_t	ret;
+	int			row;
+	int			col;
+	int			i;
+
+	i = -1;
+	xor = 0;
+	while (++i < 48)
+		xor |= (((uint64_t)blk >> (32 - des->ebit[i])) & 1) << (48 - (i + 1));
+	xor ^= key;
+	blk = 0;
+	i = -1;
+	while (++i < 8)
+	{
+		row = (xor >> (42 - (6 * i))) & 0x3f;
+		col = (row >> 1) & 0xf;
+		row = ((row >> 4) & 2) | (row & 1);
+		blk |= (uint32_t)des->s[i][row][col] << (28 - (4 * i));
+	}
+	i = -1;
+	ret = 0;
+	while (++i < 32)
+		ret |= ((blk >> (32 - des->p[i])) & 1) << (32 - (i + 1));
 	return (ret);
 }
 
 char		*des_algo(char *in, t_ssl *ssl, t_des *des)
 {
-	unsigned char	blk;
-	char			*ret;
-	size_t			i;
+	uint64_t	msg;
+	uint64_t	e_msg;
+	uint64_t	to_encrypt;
+	char		*ret;
+	size_t		i;
 
 	i = 0;
-	(void)des;
-	(void)in;
 	ret = ft_strnew(0);
+	msg = des_str_to_64bit(&in);
 	while (i < ssl->in_size)
 	{
-		blk = set_block(in + i);
-		blk = process_blk(blk, des);
-		insert_blk(in + i, blk);
+		to_encrypt = msg;
+		e_msg = process_msg(des, msg);
+		ft_memcpy(&ret[i], &e_msg, 8);
 		i += 8;
 	}
 	ssl->ou_size = i;
+	ft_memcpy(&ret[ssl->ou_size], "\0", 1);
 	return (ret);
 }
