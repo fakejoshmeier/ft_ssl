@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 04:54:33 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/31 14:09:08 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/01 14:12:27 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ uint64_t	hex_str_to_64bit(char *s)
 	return (ret);
 }
 
-uint64_t	des_str_to_64bit(char **input)
+uint64_t	des_str_to_64bit(char **input, size_t *len)
 {
 	uint8_t		i;
 	uint64_t	message;
@@ -103,10 +103,12 @@ uint64_t	des_str_to_64bit(char **input)
 
 	i = -1;
 	message = 0;
-	while (++i < 8 && **input)
+	while (++i < 8 && *len)
 	{
-		message |= ((uint64_t)(**input) << (56 - (i * 8)));
+		message |= (((uint64_t)(**input)) << (56 - (i * 8)) &
+			(0xfful << (56 - (i * 8))));
 		++(*input);
+		--(*len);
 	}
 	remaining = 8 - i;
 	while (i < 8)

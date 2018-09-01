@@ -6,27 +6,37 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/31 14:41:35 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/01 14:16:16 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-char		*des_pad(char **in, size_t *len)
+// So the problem seems to be that someone is copying over the memory space
+char		*des_algo(char *in, t_ssl *ssl, t_des *des)
 {
-	size_t		new;
-	char		byte;
-	char		*pad;
+	uint64_t	msg;
+	uint64_t	e_msg;
+	char		*ret;
+	size_t		i;
+	size_t		j;
 
-	new = ((*len / 8) + 1) * 8;
-	byte = new - *len;
-	pad = ft_strnew(new);
-	ft_memcpy(pad, *in, *len);
-	free(*in);
-	*in = pad;
-	while (*len < new)
-		(*in)[(*len)++] = byte;
-	return (*in);
+	i = ssl->in_size;
+	ret = ft_strnew(0);
+	while (ssl->ou_size < ssl->in_size)
+	{
+		msg = des_str_to_64bit(&in, &i);
+		e_msg = process_msg(des, msg);
+		j = 0;
+		while (j < 8)
+		{
+			ret[ssl->ou_size + j] = (e_msg >> (56 - (j * 8))) & 0xff;
+			++j;
+		}
+		ssl->ou_size += 8;
+		ret[ssl->ou_size] = '\0';
+	}
+	return (ret);
 }
 
 uint64_t	process_msg(t_des *des, uint64_t msg)
@@ -88,28 +98,3 @@ uint32_t	des_f(t_des *des, uint32_t blk, uint64_t key)
 	return (ret);
 }
 
-// So the problem seems to be that someone is copying over the memory space
-char		*des_algo(char *in, t_ssl *ssl, t_des *des)
-{
-	uint64_t	msg;
-	uint64_t	e_msg;
-	char		*tmp;
-	char		*ret;
-	size_t		i;
-
-	i = 0;
-	ret = ft_strnew(0);
-	while (i < ssl->in_size)
-	{
-		msg = des_str_to_64bit(&in);
-		e_msg = process_msg(des, msg);
-		tmp = ft_strnew(i + 8);
-		ft_memcpy(tmp, ret, i);
-		ft_memcpy(&tmp[i], &e_msg, 8);
-		free(ret);
-		ret = tmp;
-		i += 8;
-	}
-	ssl->ou_size = i;
-	return (ret);
-}

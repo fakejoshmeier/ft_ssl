@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/31 17:10:22 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/01 14:12:53 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,7 +314,7 @@ char				*rand_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
 void				extract_salt(t_ssl *ssl, char *in);
 uint64_t			hex_str_to_64bit(char *s);
-uint64_t			des_str_to_64bit(char **in);
+uint64_t			des_str_to_64bit(char **in, size_t *len);
 uint64_t			blender(char *key);
 
 #endif
