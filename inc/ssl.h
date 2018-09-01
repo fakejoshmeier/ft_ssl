@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:06:26 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/31 17:10:22 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <time.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <readpassphrase.h>
 
 typedef union		u_bit64
 {
@@ -295,7 +296,7 @@ int					*decrypt_ref_table(void);
 */
 
 void				des_init(t_des *des);
-void				des_pbkdf(t_ssl *ssl, t_des *des);
+void				des_pbkdf(t_ssl *ssl, t_des *des, int f);
 void				des_subkeys(t_des *des, unsigned int r);
 uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
 char				*ecb_exe(t_ssl *ssl, char *in);
@@ -307,11 +308,11 @@ uint64_t			process_msg(t_des *Des, uint64_t);
 uint32_t			des_f(t_des *des, uint32_t blk, uint64_t key);
 void				des_clean(t_ssl *ssl, t_des *des);
 
-char				*append_hash_repeat(char *pass, uint64_t salt);
+char				*a(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
-char				*random_hex_str(int size);
+char				*rand_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
-void				extract_salt(t_ssl *ssl, t_des *des, char *in);
+void				extract_salt(t_ssl *ssl, char *in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			des_str_to_64bit(char **in);
 uint64_t			blender(char *key);

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 04:54:33 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 01:20:35 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/31 14:09:08 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char		*str_to_hex(char *s)
 	return (hex_string);
 }
 
-char		*random_hex_str(int size)
+char		*rand_hex_str(int size)
 {
 	char		*ret;
 	char		buf[2 + (size / 2)];
