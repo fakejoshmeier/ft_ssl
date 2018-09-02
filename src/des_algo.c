@@ -6,34 +6,11 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 17:35:52 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:37:28 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
-
-// So the problem seems to be that someone is copying over the memory space
-char		*des_algo(char *in, t_ssl *ssl, t_des *des)
-{
-	uint64_t	msg;
-	uint64_t	e_msg;
-	char		*ret;
-	size_t		j;
-	size_t		i;
-
-	i = ssl->in_size;
-	while (ssl->ou_size < ssl->in_size)
-	{
-		msg = des_str_to_64bit(&in, &i);
-		e_msg = process_msg(des, msg);
-		j = -1;
-		while (++j < 8)
-			ret[ssl->ou_size + j] = (e_msg >> (56 - (j * 8))) & 0xff;
-		ssl->ou_size += 8;
-	}
-	ret[ssl->ou_size] = '\0';
-	return (ret);
-}
 
 uint64_t	process_msg(t_des *des, uint64_t msg)
 {
@@ -93,4 +70,3 @@ uint32_t	des_f(t_des *des, uint32_t blk, uint64_t key)
 		ret |= ((blk >> (32 - des->p[i])) & 1) << (32 - (i + 1));
 	return (ret);
 }
-

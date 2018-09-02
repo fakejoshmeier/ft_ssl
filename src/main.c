@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 12:53:02 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:41:15 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,5 @@ int		main(int ac, char *av[])
 	ssl.cmd(&ssl);
 	free(ssl.flag);
 	ssl.flag = NULL;
-//	while (1);
 	return (0);
 }

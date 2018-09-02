@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 14:12:53 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:21:35 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,8 +300,9 @@ void				des_pbkdf(t_ssl *ssl, t_des *des, int f);
 void				des_subkeys(t_des *des, unsigned int r);
 uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
 char				*ecb_exe(t_ssl *ssl, char *in);
-char				*ecb_encode(t_des *des, t_ssl *ssl, char *in);
-char				*ecb_decode(t_des *des, t_ssl *ssl, char *in);
+char				*ecb_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*ecb_enc_out(t_ssl *ssl, t_des *des);
+char				*ecb_decrypt(t_des *des, t_ssl *ssl, char *in);
 char				*des_pad(char **in, size_t *len);
 char				*des_algo(char *in, t_ssl *ssl, t_des *des);
 uint64_t			process_msg(t_des *Des, uint64_t);
@@ -312,7 +313,7 @@ char				*a(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
 char				*rand_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
-void				extract_salt(t_ssl *ssl, char *in);
+void				extract_salt(t_ssl *ssl, char **in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			des_str_to_64bit(char **in, size_t *len);
 uint64_t			blender(char *key);

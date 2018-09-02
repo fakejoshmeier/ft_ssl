@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/31 17:11:23 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:40:47 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 ** I'll follow that example.
 */
 
-char	*a(char *pass, uint64_t salt)
+char		*a(char *pass, uint64_t salt)
 {
-	t_ssl	hash;
-	char	*ret;
-	char	*tmp;
-	int		i;
+	t_ssl		hash;
+	char		*ret;
+	char		*tmp;
+	int			i;
 
 	i = ft_strlen(pass);
 	NULL_GUARD(tmp = ft_strnew(i + 8));
@@ -88,14 +88,16 @@ void		des_clean(t_ssl *ssl, t_des *des)
 ** become my sugar daddy.
 */
 
-void	extract_salt(t_ssl *ssl, char *in)
+void		extract_salt(t_ssl *ssl, char **in)
 {
 	uint64_t	test;
 	char		*pass;
 	char		*tmp;
 
-	MATCH(!ft_strnequ(in, "Salted__", 8), ft_error("Bad magic number", 1));
-	ft_memcpy(&test, &in[8], 8);
+	MATCH(!ft_strnequ(*in, "Salted__", 8), ft_error("Bad magic number", 1));
+	ft_memcpy(&test, &(*in)[8], 8);
+	ssl->in_size -= 16;
+	*in += 16;
 	if (!ssl->user_pass)
 	{
 		pass = getpass("enter decryption password:");
