@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 15:25:35 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/01 17:34:44 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,28 +39,47 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 	return (ret);
 }
 
+char		*ecb_enc_out(t_ssl *ssl, t_des *des)
+{
+	char		*ret;
+
+	ret = ssl->user_pass ? ft_strnew(ssl->in_size + 24) :
+		ft_strnew(ssl->in_size + 8);
+	if (ssl->user_pass)
+	{
+		des->nacl = hex_str_to_64bit(ssl->user_salt);
+		ft_memcpy(ret, "Salted__", 8);
+		ft_memcpy(&ret[8], &des->nacl, 8);
+		ret += 16;
+	}
+	ssl->in_size += ((ssl->in_size % 8) == 0) ? 8 : 0;
+	return (ret);
+}
+
 char		*ecb_encode(t_des *des, t_ssl *ssl, char *in)
 {
-	char		*salted;
+	uint64_t	msg;
+	uint64_t	e_msg;
 	char		*ret;
-	char		*tmp;
-	int			i;
+	size_t		i;
+	size_t		j;
 
 	des_pbkdf(ssl, des, 1);
 	des_subkeys(des, ssl->flag->d);
-	ssl->in_size += (ssl->in_size % 8 == 0) ? 8 : 0;
-	ret = des_algo(in, ssl, des);
-	if (ssl->user_pass)
+	ret = ecb_enc_out(ssl, des);
+	i = ssl->in_size;
+	while (ssl->ou_size < ssl->in_size)
 	{
-		salted = ft_strnew(16);
-		ft_memcpy(salted, "Salted__", 8);
-		i = -1;
-		while (++i < 8)
-			salted[8 + i] = (des->nacl >> (56 - (i * 8))) & 0xff;
-		tmp = ft_strfjoin(salted, ret);
-		free(ret);
-		ret = tmp;
+		msg = des_str_to_64bit(&in, &i);
+		e_msg = process_msg(des, msg);
+		j = -1;
+		while (++j < 8)
+			ret[ssl->ou_size +j] = (e_msg >> (56 - (j * 8))) & 0xff;
+		ssl->ou_size += 8;
 	}
+	ret -= ssl->user_pass ? 16 : 0;
+	ssl->ou_size += ssl->user_pass ? 16 : 0;
+///	ret[ssl->ou_size] = '\0';
 	return (ret);
 }
 
@@ -79,20 +98,14 @@ char		*ecb_decode(t_des *des, t_ssl *ssl, char *in)
 	char	*tmp;
 	char	*ret;
 
-	if (ssl->flag->a && ssl->flag->d)
-	{
-		tmp = base64_exe(ssl, in);
-		free(in);
-		in = tmp;
-	}
-	if (!ssl->flag->k)
-	{
+//	if (!ssl->flag->k)
+//	{
 		extract_salt(ssl, in);
 		tmp = ft_strnew((ssl->in_size -= 16));
-		ft_memcpy(&tmp, &in[16], ssl->in_size);
+		ft_memcpy(tmp, &in[16], ssl->in_size);
 		free(in);
 		in = tmp;
-	}
+//	}
 	des->key = blender(ssl->user_key);
 	des_subkeys(des, ssl->flag->d);
 	ret = des_algo(in, ssl, des);

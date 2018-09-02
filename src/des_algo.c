@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 14:16:16 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/01 17:35:52 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,20 @@ char		*des_algo(char *in, t_ssl *ssl, t_des *des)
 	uint64_t	msg;
 	uint64_t	e_msg;
 	char		*ret;
-	size_t		i;
 	size_t		j;
+	size_t		i;
 
 	i = ssl->in_size;
-	ret = ft_strnew(0);
 	while (ssl->ou_size < ssl->in_size)
 	{
 		msg = des_str_to_64bit(&in, &i);
 		e_msg = process_msg(des, msg);
-		j = 0;
-		while (j < 8)
-		{
+		j = -1;
+		while (++j < 8)
 			ret[ssl->ou_size + j] = (e_msg >> (56 - (j * 8))) & 0xff;
-			++j;
-		}
 		ssl->ou_size += 8;
-		ret[ssl->ou_size] = '\0';
 	}
+	ret[ssl->ou_size] = '\0';
 	return (ret);
 }
 
