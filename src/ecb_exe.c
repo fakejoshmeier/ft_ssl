@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:22:07 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:42:33 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,73 +19,104 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 	char		*tmp;
 
 	des_init(&des);
-	des_pbkdf(ssl, &des);
 	if (ssl->flag->a && ssl->flag->d)
 	{
 		tmp = base64_exe(ssl, in);
-		free(in);
 		in = tmp;
 	}
-	if (!ssl->flag->d)
-		des_pad(&in, &(ssl->in_size));
-//	ret = ssl->flag->d ? ecb_decode(ssl, &des, in) : 0; //ecb_encode(ssl, &des, in);
-	if (!ssl->flag->d)
-		ret = ecb_encode(&des, ssl, in);
-	else
-		ret = ft_strdup(in);
-//	printf("Password:%s\nSalt:%s\nKey:%s\nIV:%s\n", ssl->user_pass,
-//		ssl->user_salt, ssl->user_key, ssl->user_iv);
+	ret = ssl->flag->d ? ecb_decrypt(&des, ssl, in) :
+		ecb_encrypt(&des, ssl, in);
+//	MATCH(ssl->user_pass, printf("Password:%s\n", ssl->user_pass));
+//	MATCH(ssl->user_salt, printf("Salt:%s\n", ssl->user_salt));
+//	MATCH(ssl->user_key, printf("Key:%s\n", ssl->user_key));
+//	MATCH(ssl->user_iv, printf("IV :%s\n", ssl->user_iv));
+	if (ssl->flag->a && !ssl->flag->d)
+	{
+		tmp = base64_exe(ssl, ret);
+		ret = tmp;
+	}
 	free(in);
 	des_clean(ssl, &des);
 	return (ret);
 }
 
-char		*ecb_encode(t_des *des, t_ssl *ssl, char *in)
+char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
 {
-	char		*salted;
+	uint64_t	msg;
+	uint64_t	e_msg;
 	char		*ret;
-	char		*tmp;
+	size_t		i;
+	size_t		j;
 
+	des_pbkdf(ssl, des, 1);
 	des_subkeys(des, ssl->flag->d);
-	salted = ft_strnew(16);
-	ft_memcpy(salted, "Salted__", 8);
-	ft_memcpy(&salted[8], &(des->nacl), 8);
-	ret = des_algo(in, ssl, des);
-	if (ssl->flag->a)
+	ret = ecb_enc_out(ssl, des);
+	i = ssl->in_size;
+	while (ssl->ou_size < ssl->in_size)
 	{
-		tmp = base64_exe(ssl, ret);
-		free(ret);
-		ret = tmp;
+		msg = des_str_to_64bit(&in, &i);
+		e_msg = process_msg(des, msg);
+		j = -1;
+		while (++j < 8)
+			ret[ssl->ou_size + j] = (e_msg >> (56 - (j * 8))) & 0xff;
+		ssl->ou_size += 8;
 	}
-	tmp = ft_strfjoin(salted, ret);
-	free(ret);
-	ret = tmp;
+	ret -= ssl->user_pass ? 16 : 0;
+	ssl->ou_size += ssl->user_pass ? 16 : 0;
+	ret[ssl->ou_size] = '\0';
+	return (ret);
+}
+
+char		*ecb_enc_out(t_ssl *ssl, t_des *des)
+{
+	char		*ret;
+
+	ret = ssl->user_pass ? ft_strnew(ssl->in_size + 24) :
+		ft_strnew(ssl->in_size + 8);
+	if (ssl->user_pass)
+	{
+		des->nacl = hex_str_to_64bit(ssl->user_salt);
+		ft_memcpy(ret, "Salted__", 8);
+		ft_memcpy(&ret[8], &des->nacl, 8);
+		ret += 16;
+	}
+	ssl->in_size += ((ssl->in_size % 8) == 0) ? 8 : 0;
 	return (ret);
 }
 
 /*
- * So the thing is that des will have the salt as part of the output after the
- * input gets encrypted, so I can't *quite* create a random salt.  Actually,
- * can't I just free the salt?  All I need to do is clean up the key, iv, and
- * salt, then remake them.  I need a check for if des->nacl == whatever I
- * pull out of the input.  If it does, great.  If it doesn't, I append hash
- * repeat with nacl as a parameter, free the iv and keys, and run them through
- * blender and such.
+** So the thing is that des will have the salt as part of the output after the
+** input gets encrypted, so I can't *quite* create a random salt.  Actually,
+** can't I just free the salt?  All I need to do is clean up the key, iv, and
+** salt, then remake them.  I need a check for if des->nacl == whatever I
+** pull out of the input.  If it does, great.  If it doesn't, I append hash
+** repeat with nacl as a parameter, free the iv and keys, and run them through
+** blender and such.
 */
 
-char		*ecb_decode(t_des *des, t_ssl *ssl, char *in)
+char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
 {
-	char	*tmp;
+	uint64_t	msg;
+	uint64_t	d_msg;
+	size_t		i;
+	size_t		j;
+	char		*ret;
 
-	if (ft_strnequ("Salted__", in, 8))
-	{
-		extract_salt(ssl, des, in);
-		tmp = ft_strnew((ssl->in_size -= 16));
-		ft_memcpy(&tmp, &in[16], ssl->in_size);
-	}
-
-	tmp = in;
-	free(in);
+	if (!ssl->flag->k)
+		extract_salt(ssl, &in);
+	des->key = blender(ssl->user_key);
 	des_subkeys(des, ssl->flag->d);
-	return (tmp);
+	ret = ft_strnew(ssl->in_size);
+	i = ssl->in_size;
+	while (ssl->ou_size < ssl->in_size)
+	{
+		msg = des_str_to_64bit(&in, &i);
+		d_msg = process_msg(des, msg);
+		j = -1;
+		while (++j < 8)
+			ret[ssl->ou_size + j] = (d_msg >> (56 - (j * 8))) & 0xff;
+		ssl->ou_size += 8;
+	}
+	ret[ssl->ou_size] = '\0';
+	return (ret);
 }

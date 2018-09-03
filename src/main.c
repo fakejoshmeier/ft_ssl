@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:24:30 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:41:15 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ the input/output in base64, depending on encrypt mode\n-d\tdecrypt mode\n-e\t\
 file for message\n-p\tpassword in ascii is the next argument\n-s\tthe salt in \
 hex is the next argument\n-v\tinitialization vector in hex is the next argument\
 \n", str));
+	OR(i == 9, ft_printf("%s: No provided password, key, IV, or salt\n", str));
 	exit(1);
 }
 
@@ -49,6 +50,5 @@ int		main(int ac, char *av[])
 	ssl.cmd(&ssl);
 	free(ssl.flag);
 	ssl.flag = NULL;
-	while(1);
 	return (0);
 }

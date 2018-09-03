@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:13:45 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/08/31 17:09:21 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void		des_init(t_des *des)
 {
+	ft_bzero(des, sizeof(t_des));
 	des->pc1 = ft_atoi_arr(PC1);
 	des->pc2 = ft_atoi_arr(PC2);
 	des->shifts = ft_atoi_arr(SHIFT_BY);
@@ -37,15 +38,17 @@ void		des_init(t_des *des)
 ** instead of making my own up or whatever.  That's all in the pdf at any rate.
 ** So, the way it works is, with the password, I append a randomly conjured
 ** salt, then hash the password + salt however many times
+**
+** I don't believe there's a problem with this?
 */
 
-void		des_pbkdf(t_ssl *ssl, t_des *des)
+void		des_pbkdf(t_ssl *ssl, t_des *des, int f)
 {
 	char		*tmp;
-	char		*out;
 	int			i;
 
-	if (!ssl->user_pass && (!ssl->user_key || !ssl->user_iv))
+	if (((f == 1 && !ssl->flag->k) || (!f && !ssl->flag->k && !ssl->flag->v)) &&
+		!ssl->user_pass)
 	{
 		tmp = getpass("Enter encryption password:");
 		ssl->user_pass = ft_strnew(32);
@@ -55,16 +58,15 @@ void		des_pbkdf(t_ssl *ssl, t_des *des)
 			(tmp = getpass("Reenter for confirmation:")), i <= 32 ? i : 32))
 			ft_error("Password confirmation failed.  Exiting.", 1);
 		ft_bzero(tmp, i);
-		while (i < 32)
-			ssl->user_pass[i++] = '0';
-		MATCH(!ssl->user_salt, ssl->user_salt = random_hex_str(16));
-		des->nacl = hex_str_to_64bit(ssl->user_salt);
-		out = append_hash_repeat(ssl->user_pass, des->nacl);
-		ft_strtoupper(&out);
-		MATCH(!ssl->user_key, ssl->user_key = ft_strndup(out, 16));
-		MATCH(!ssl->user_iv, ssl->user_iv = ft_strndup(&out[16], 16));
-		free(out);
+		free(tmp);
+		ft_strclean(ssl->user_pass);
 	}
+	MATCH(!ssl->user_salt, ssl->user_salt = rand_hex_str(16));
+	des->nacl = hex_str_to_64bit(ssl->user_salt);
+	MATCH(ssl->user_pass, tmp = a(ssl->user_pass, des->nacl));
+	MATCH(!ssl->user_key && tmp, ssl->user_key = ft_strndup(tmp, 16));
+	MATCH(!ssl->user_iv && tmp, ssl->user_iv = ft_strndup(&tmp[16], 16));
+	MATCH(ssl->user_pass, free(tmp));
 	des->key = blender(ssl->user_key);
 }
 

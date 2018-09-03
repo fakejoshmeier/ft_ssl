@@ -6,30 +6,11 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:08:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/02 13:37:28 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
-
-char		*des_pad(char **in, size_t *len)
-{
-	size_t		stuffing;
-	size_t		i;
-	char		*pad;
-	char		*tmp;
-
-	stuffing = 8 - (*len % 8);
-	pad = ft_strnew(stuffing);
-	i = -1;
-	while (++i < stuffing)
-		pad[i] = stuffing;
-	tmp = *in;
-	*in = ft_strfjoin(tmp, pad);
-	free(pad);
-	*len += stuffing;
-	return (*in);
-}
 
 uint64_t	process_msg(t_des *des, uint64_t msg)
 {
@@ -87,28 +68,5 @@ uint32_t	des_f(t_des *des, uint32_t blk, uint64_t key)
 	ret = 0;
 	while (++i < 32)
 		ret |= ((blk >> (32 - des->p[i])) & 1) << (32 - (i + 1));
-	return (ret);
-}
-
-char		*des_algo(char *in, t_ssl *ssl, t_des *des)
-{
-	uint64_t	msg;
-	uint64_t	e_msg;
-	uint64_t	to_encrypt;
-	char		*ret;
-	size_t		i;
-
-	i = 0;
-	ret = ft_strnew(0);
-	msg = des_str_to_64bit(&in);
-	while (i < ssl->in_size)
-	{
-		to_encrypt = msg;
-		e_msg = process_msg(des, msg);
-		ft_memcpy(&ret[i], &e_msg, 8);
-		i += 8;
-	}
-	ssl->ou_size = i;
-	ft_memcpy(&ret[ssl->ou_size], "\0", 1);
 	return (ret);
 }
