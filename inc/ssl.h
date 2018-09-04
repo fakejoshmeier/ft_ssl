@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/02 13:21:35 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/04 12:45:46 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ typedef struct		s_des
 	int				*init_perm;
 	int				*ebit;
 	int				*s[8][4];
-	int				*p;
-	int				*fp;
+	int				*p32;
+	int				*final_perm;
 }					t_des;
 
 typedef struct		s_sha
@@ -211,7 +211,8 @@ void				file_out(t_ssl *ssl, char *out);
 
 t_flag				*md_flags(char ***av, t_ssl *ssl);
 t_flag				*b64_flags(char ***av, t_ssl *ssl);
-t_flag				*des_flags(char ***av, t_ssl *ssl);
+t_flag				*ecb_flags(char ***av, t_ssl *ssl);
+t_flag				*cbc_flags(char ***av, t_ssl *ssl);
 
 /*
 ** Endian functions
@@ -296,7 +297,7 @@ int					*decrypt_ref_table(void);
 */
 
 void				des_init(t_des *des);
-void				des_pbkdf(t_ssl *ssl, t_des *des, int f);
+void				des_pbkdf(t_ssl *ssl, t_des *des, char **in);
 void				des_subkeys(t_des *des, unsigned int r);
 uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
 char				*ecb_exe(t_ssl *ssl, char *in);
@@ -313,7 +314,7 @@ char				*a(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
 char				*rand_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
-void				extract_salt(t_ssl *ssl, char **in);
+uint64_t			extract_salt(t_ssl *ssl, char **in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			des_str_to_64bit(char **in, size_t *len);
 uint64_t			blender(char *key);

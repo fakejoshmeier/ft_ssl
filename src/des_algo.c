@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/02 13:37:28 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/03 20:54:26 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ uint64_t	process_msg(t_des *des, uint64_t msg)
 		des->r[i] = des->l[i - 1] ^ des_f(des, des->r[i - 1], des->subkey[i]);
 	}
 	ret = ((uint64_t)des->r[15] << 32) | (uint64_t)des->l[15];
-	return (permute_key_by_x_for_y(ret, des->fp, 64));
+	return (permute_key_by_x_for_y(ret, des->final_perm, 64));
 }
 
 /*
@@ -67,6 +67,6 @@ uint32_t	des_f(t_des *des, uint32_t blk, uint64_t key)
 	i = -1;
 	ret = 0;
 	while (++i < 32)
-		ret |= ((blk >> (32 - des->p[i])) & 1) << (32 - (i + 1));
+		ret |= ((blk >> (32 - des->p32[i])) & 1) << (32 - (i + 1));
 	return (ret);
 }

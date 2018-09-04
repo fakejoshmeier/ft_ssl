@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/31 17:09:21 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/04 12:52:46 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,41 +28,55 @@ void		des_init(t_des *des)
 	GET_S6;
 	GET_S7;
 	GET_S8;
-	des->p = ft_atoi_arr(P_TABLE);
-	des->fp = ft_atoi_arr(FP);
+	des->p32 = ft_atoi_arr(P_TABLE);
+	des->final_perm = ft_atoi_arr(FP);
 }
 
 /*
 ** So.  PBKDF, or Password Based Key Derivation Function.  I need a password
 ** in the case of no key and iv.  If no password is provided, I prompt the user
-** instead of making my own up or whatever.  That's all in the pdf at any rate.
+** and ask for confirmation.
 ** So, the way it works is, with the password, I append a randomly conjured
 ** salt, then hash the password + salt however many times
 **
 ** I don't believe there's a problem with this?
 */
 
-void		des_pbkdf(t_ssl *ssl, t_des *des, int f)
+uint64_t	extract_salt(t_ssl *ssl, char **in)
+{
+	uint64_t	test;
+
+	if (ssl->flag->k)
+		return (0);
+	MATCH(!ft_strnequ(*in, "Salted__", 8), ft_error("Bad magic number", 1));
+	ft_memcpy(&test, &(*in)[8], 8);
+	ssl->in_size -= 16;
+	*in += 16;
+	return (test);
+}
+
+void		des_pbkdf(t_ssl *ssl, t_des *des, char **in)
 {
 	char		*tmp;
 	int			i;
 
-	if (((f == 1 && !ssl->flag->k) || (!f && !ssl->flag->k && !ssl->flag->v)) &&
-		!ssl->user_pass)
+	if (!ssl->flag->k && !ssl->user_pass)
 	{
-		tmp = getpass("Enter encryption password:");
-		ssl->user_pass = ft_strnew(32);
-		ft_memcpy(ssl->user_pass, tmp, (i = ft_strlen(tmp)) <= 32 ? i : 32);
+		tmp = !ssl->flag->d ? getpass("Enter encryption password:") :
+			getpass("Enter decryption password:");
+		ssl->user_pass = ft_strnew((i = ft_strlen(tmp)));
+		ft_memcpy(ssl->user_pass, tmp, i);
 		ft_bzero(tmp, i);
-		if (!ft_strnequ(ssl->user_pass,
-			(tmp = getpass("Reenter for confirmation:")), i <= 32 ? i : 32))
+		if (!ssl->flag->d && !ft_strnequ(ssl->user_pass,
+			(tmp = getpass("Reenter for confirmation:")), i))
 			ft_error("Password confirmation failed.  Exiting.", 1);
 		ft_bzero(tmp, i);
 		free(tmp);
 		ft_strclean(ssl->user_pass);
 	}
 	MATCH(!ssl->user_salt, ssl->user_salt = rand_hex_str(16));
-	des->nacl = hex_str_to_64bit(ssl->user_salt);
+	des->nacl = ssl->flag->d ? extract_salt(ssl, in) :
+		hex_str_to_64bit(ssl->user_salt);
 	MATCH(ssl->user_pass, tmp = a(ssl->user_pass, des->nacl));
 	MATCH(!ssl->user_key && tmp, ssl->user_key = ft_strndup(tmp, 16));
 	MATCH(!ssl->user_iv && tmp, ssl->user_iv = ft_strndup(&tmp[16], 16));
@@ -78,13 +92,13 @@ void		des_pbkdf(t_ssl *ssl, t_des *des, int f)
 
 void		des_subkeys(t_des *des, unsigned int r)
 {
-	uint64_t	kp;
+	uint64_t	perm_key;
 	int			i;
 	int			j;
 
-	kp = permute_key_by_x_for_y(des->key, des->pc1, 56);
-	des->l[0] = DES_ROT((kp >> 28), des->shifts[0]);
-	des->r[0] = DES_ROT((kp & 0xfffffff), des->shifts[0]);
+	perm_key = permute_key_by_x_for_y(des->key, des->pc1, 56);
+	des->l[0] = DES_ROT((perm_key >> 28), des->shifts[0]);
+	des->r[0] = DES_ROT((perm_key & 0xfffffff), des->shifts[0]);
 	i = 0;
 	while (++i < 16)
 	{
@@ -95,8 +109,8 @@ void		des_subkeys(t_des *des, unsigned int r)
 	while (++i < 16)
 	{
 		j = !r ? i : 15 - i;
-		kp = ((uint64_t)des->l[i] << 28) | (uint64_t)des->r[i];
-		des->subkey[j] = permute_key_by_x_for_y(kp, des->pc2, 48);
+		perm_key = ((uint64_t)des->l[i] << 28) | (uint64_t)des->r[i];
+		des->subkey[j] = permute_key_by_x_for_y(perm_key, des->pc2, 48);
 	}
 }
 
@@ -113,6 +127,6 @@ uint64_t	permute_key_by_x_for_y(uint64_t key, int *pc, int size)
 	i = -1;
 	ret = 0;
 	while (++i < size)
-		ret |= (key >> (MIN(size + 8, 64) - pc[i]) & 1) << (size - (i + 1));
+		ret |= (key >> (MIN((size + 8), 64) - pc[i]) & 1) << (size - (i + 1));
 	return (ret);
 }

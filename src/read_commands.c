@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/26 22:26:46 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/25 18:22:28 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/04 12:41:26 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ int		read_commands1(char **av, t_ssl *ssl)
 	else if (ft_strequ(*av, "base64"))
 		strike(ssl, cipher, base64_exe, b64_flags);
 	else if (ft_strequ(*av, "des"))
-		strike(ssl, cipher, ecb_exe, des_flags);
+		strike(ssl, cipher, ecb_exe, ecb_flags);
 	else if (ft_strequ(*av, "des-ecb"))
-		strike(ssl, cipher, ecb_exe, des_flags);
+		strike(ssl, cipher, ecb_exe, ecb_flags);
 	/*
 	else if (ft_strequ(*av, "des-cbc"))
-		strike(ssl, cipher, des_exe, des_flags);
+		strike(ssl, cipher, cbc_exe, cbc_flags);
 	}*/
 	return (ssl->exe ? 1 : 0);
 }
