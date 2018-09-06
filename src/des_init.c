@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/04 12:52:46 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 13:34:19 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,9 @@ void		des_init(t_des *des)
 ** in the case of no key and iv.  If no password is provided, I prompt the user
 ** and ask for confirmation.
 ** So, the way it works is, with the password, I append a randomly conjured
-** salt, then hash the password + salt however many times
-**
-** I don't believe there's a problem with this?
+** salt, then hash the password + salt however many times.  In the case of
+** OpenSSL, it's once.
 */
-
-uint64_t	extract_salt(t_ssl *ssl, char **in)
-{
-	uint64_t	test;
-
-	if (ssl->flag->k)
-		return (0);
-	MATCH(!ft_strnequ(*in, "Salted__", 8), ft_error("Bad magic number", 1));
-	ft_memcpy(&test, &(*in)[8], 8);
-	ssl->in_size -= 16;
-	*in += 16;
-	return (test);
-}
 
 void		des_pbkdf(t_ssl *ssl, t_des *des, char **in)
 {
@@ -64,8 +50,8 @@ void		des_pbkdf(t_ssl *ssl, t_des *des, char **in)
 	{
 		tmp = !ssl->flag->d ? getpass("Enter encryption password:") :
 			getpass("Enter decryption password:");
-		ssl->user_pass = ft_strnew((i = ft_strlen(tmp)));
-		ft_memcpy(ssl->user_pass, tmp, i);
+		ssl->user_pass = ft_strnew(ft_strlen(tmp));
+		ft_memcpy(ssl->user_pass, tmp, (i = ft_strlen(tmp)));
 		ft_bzero(tmp, i);
 		if (!ssl->flag->d && !ft_strnequ(ssl->user_pass,
 			(tmp = getpass("Reenter for confirmation:")), i))
@@ -82,6 +68,27 @@ void		des_pbkdf(t_ssl *ssl, t_des *des, char **in)
 	MATCH(!ssl->user_iv && tmp, ssl->user_iv = ft_strndup(&tmp[16], 16));
 	MATCH(ssl->user_pass, free(tmp));
 	des->key = blender(ssl->user_key);
+}
+
+/*
+** For OpenSSL, a DES ciphered output that has also been salted will have 16
+** bytes at the front.  The first eight will be "Salted__", followed by the 8
+** bit long salt.  This function checks for the salt in the case of no key being
+** provided.  If there is a key, the salt isn't necessary.  Anyway, I get the
+** salt and life goes on.
+*/
+
+uint64_t	extract_salt(t_ssl *ssl, char **in)
+{
+	uint64_t	test;
+
+	if (ssl->flag->k)
+		return (0);
+	MATCH(!ft_strnequ(*in, "Salted__", 8), ft_error("Bad magic number", 1));
+	ft_memcpy(&test, &(*in)[8], 8);
+	ssl->in_size -= 16;
+	*in += 16;
+	return (test);
 }
 
 /*

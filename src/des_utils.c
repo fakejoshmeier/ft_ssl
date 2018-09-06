@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/04 12:48:16 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 12:25:53 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,20 @@ void		des_clean(t_ssl *ssl, t_des *des)
 	}
 	free(des->p32);
 	free(des->final_perm);
+}
+
+char		*des_enc_out(t_ssl *ssl, t_des *des)
+{
+	char		*ret;
+
+	ret = ssl->user_pass ? ft_strnew(ssl->in_size + 24) :
+		ft_strnew(ssl->in_size + 8);
+	if (ssl->user_pass)
+	{
+		des->nacl = hex_str_to_64bit(ssl->user_salt);
+		ft_memcpy(ret, "Salted__", 8);
+		ft_memcpy(&ret[8], &des->nacl, 8);
+		ret += 16;
+	}
+	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/04 12:45:46 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 13:38:56 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,16 +300,10 @@ void				des_init(t_des *des);
 void				des_pbkdf(t_ssl *ssl, t_des *des, char **in);
 void				des_subkeys(t_des *des, unsigned int r);
 uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
-char				*ecb_exe(t_ssl *ssl, char *in);
-char				*ecb_encrypt(t_des *des, t_ssl *ssl, char *in);
-char				*ecb_enc_out(t_ssl *ssl, t_des *des);
-char				*ecb_decrypt(t_des *des, t_ssl *ssl, char *in);
-char				*des_pad(char **in, size_t *len);
-char				*des_algo(char *in, t_ssl *ssl, t_des *des);
+char				*des_enc_out(t_ssl *ssl, t_des *des);
 uint64_t			process_msg(t_des *Des, uint64_t);
 uint32_t			des_f(t_des *des, uint32_t blk, uint64_t key);
 void				des_clean(t_ssl *ssl, t_des *des);
-
 char				*a(char *pass, uint64_t salt);
 char				*str_to_hex(char *s);
 char				*rand_hex_str(int size);
@@ -318,5 +312,21 @@ uint64_t			extract_salt(t_ssl *ssl, char **in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			des_str_to_64bit(char **in, size_t *len);
 uint64_t			blender(char *key);
+
+/*
+** ECB Functions
+*/
+
+char				*ecb_exe(t_ssl *ssl, char *in);
+char				*ecb_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*ecb_decrypt(t_des *des, t_ssl *ssl, char *in);
+
+/*
+** CBC Functions
+*/
+
+char				*cbc_exe(t_ssl *ssl, char *in);
+char				*cbc_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*cbc_decrypt(t_des *des, t_ssl *ssl, char *in);
 
 #endif

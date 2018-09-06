@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ecb_exe.c                                          :+:      :+:    :+:   */
+/*   cbc_exe.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 13:32:57 by jmeier           ###   ########.fr       */
+/*   Created: 2018/09/06 12:20:44 by jmeier            #+#    #+#             */
+/*   Updated: 2018/09/06 13:36:54 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-char		*ecb_exe(t_ssl *ssl, char *in)
+char		*cbc_exe(t_ssl *ssl, char *in)
 {
 	t_des		des;
 	char		*ret;
@@ -27,8 +27,8 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 		in = tmp;
 		ssl->ou_size = 0;
 	}
-	ret = ssl->flag->d ? ecb_decrypt(&des, ssl, in) :
-		ecb_encrypt(&des, ssl, in);
+	ret = ssl->flag->d ? cbc_decrypt(&des, ssl, in) :
+		cbc_encrypt(&des, ssl, in);
 	if (ssl->flag->a && !ssl->flag->d)
 	{
 		tmp = base64_exe(ssl, ret);
@@ -39,7 +39,7 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 	return (ret);
 }
 
-char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
+char		*cbc_encrypt(t_des *des, t_ssl *ssl, char *in)
 {
 	uint64_t	msg;
 	uint64_t	e_msg;
@@ -64,7 +64,7 @@ char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
 	return (ret);
 }
 
-char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
+char		*cbc_decrypt(t_des *des, t_ssl *ssl, char *in)
 {
 	uint64_t	msg;
 	uint64_t	d_msg;
