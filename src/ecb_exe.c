@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 13:32:57 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 15:47:41 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 		ecb_encrypt(&des, ssl, in);
 	if (ssl->flag->a && !ssl->flag->d)
 	{
+		ssl->in_size = ssl->ou_size;
 		tmp = base64_exe(ssl, ret);
 		ret = tmp;
 	}
