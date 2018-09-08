@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 12:20:44 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:15:27 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 18:50:30 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char		*cbc_exe(t_ssl *ssl, char *in)
 
 	des_init(&des);
 	des_pbkdf(ssl, &des, &in);
-	des_subkeys(&des, ssl->flag->d);
+	des_subkeys(&des, ssl->flag->d, des.key);
 	des.iv = hex_str_to_64bit(ssl->user_iv);
 	if (ssl->flag->a && ssl->flag->d)
 	{

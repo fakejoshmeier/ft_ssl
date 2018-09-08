@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 13:34:19 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 18:48:41 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,13 @@ uint64_t	extract_salt(t_ssl *ssl, char **in)
 ** math and indices, it's not too difficult to do.
 */
 
-void		des_subkeys(t_des *des, unsigned int r)
+void		des_subkeys(t_des *des, unsigned int r, uint64_t chi)
 {
 	uint64_t	perm_key;
 	int			i;
 	int			j;
 
-	perm_key = permute_key_by_x_for_y(des->key, des->pc1, 56);
+	perm_key = permute_key_by_x_for_y(chi, des->pc1, 56);
 	des->l[0] = DES_ROT((perm_key >> 28), des->shifts[0]);
 	des->r[0] = DES_ROT((perm_key & 0xfffffff), des->shifts[0]);
 	i = 0;

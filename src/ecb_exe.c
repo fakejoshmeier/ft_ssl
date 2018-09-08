@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 15:47:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 18:50:21 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 
 	des_init(&des);
 	des_pbkdf(ssl, &des, &in);
-	des_subkeys(&des, ssl->flag->d);
+	des_subkeys(&des, ssl->flag->d, des.key);
 	if (ssl->flag->a && ssl->flag->d)
 	{
 		tmp = base64_exe(ssl, in);
