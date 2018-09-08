@@ -6,11 +6,25 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/02 13:41:15 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/03 15:31:07 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
+
+char	**pull_from_stdin(void)
+{
+	t_ssl	tmp;
+	char	**ret;
+	char	*s;
+
+	ft_bzero(&tmp, sizeof(t_ssl));
+	s = stdin_in(&tmp);
+	ret = ft_strsplit(s, ' ');
+	free(s);
+	s = NULL;
+	return (ret);
+}
 
 void	ft_error(char *str, int i)
 {

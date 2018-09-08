@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 04:54:33 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/01 14:12:27 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/04 12:56:56 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ uint64_t	des_str_to_64bit(char **input, size_t *len)
 	while (++i < 8 && *len)
 	{
 		message |= (((uint64_t)(**input)) << (56 - (i * 8)) &
-			(0xfful << (56 - (i * 8))));
+			(0xFFUL << (56 - (i * 8))));
 		++(*input);
 		--(*len);
 	}

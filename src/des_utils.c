@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/02 13:40:47 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 18:49:49 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,38 +75,24 @@ void		des_clean(t_ssl *ssl, t_des *des)
 		while (++j < 4)
 			free(des->s[i][j]);
 	}
-	free(des->p);
-	free(des->fp);
+	free(des->p32);
+	free(des->final_perm);
 }
 
-/*
-** So, basically, if the input is salted, I am going to demand a password.  I am
-** also going to recalculate the key and IV, even though OpenSSL just takes the
-** incorrect key input over the existence of a salt.  Granted, there is the
-** chance that there is an unsalted output will somehow produce a perfect first
-** 8 bits that say "Salted__".  And there is a chance that Warren Buffett will
-** become my sugar daddy.
-*/
-
-void		extract_salt(t_ssl *ssl, char **in)
+char		*des_enc_out(t_ssl *ssl, t_des *des)
 {
-	uint64_t	test;
-	char		*pass;
-	char		*tmp;
+	char		*ret;
 
-	MATCH(!ft_strnequ(*in, "Salted__", 8), ft_error("Bad magic number", 1));
-	ft_memcpy(&test, &(*in)[8], 8);
-	ssl->in_size -= 16;
-	*in += 16;
-	if (!ssl->user_pass)
+	ret = ssl->user_pass ? ft_strnew(ssl->in_size + 24) :
+		ft_strnew(ssl->in_size + 8);
+	if (ssl->user_pass)
 	{
-		pass = getpass("enter decryption password:");
-		ssl->user_pass = ft_strnew(ft_strlen(pass));
-		ft_memcpy(ssl->user_pass, pass, ft_strlen(pass));
-		ft_bzero(pass, ft_strlen(pass));
+		des->nacl = hex_str_to_64bit(ssl->user_salt);
+		ft_memcpy(ret, "Salted__", 8);
+		ft_memcpy(&ret[8], &des->nacl, 8);
+		ret += 16;
 	}
-	tmp = a(ssl->user_pass, test);
-	ssl->user_key = ft_strndup(tmp, 16);
-	ssl->user_iv = ft_strndup(&tmp[16], 16);
-	free(tmp);
+	return (ret);
 }
+
+
