@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 11:59:21 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:41:11 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/15 19:53:04 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*base64_exe(t_ssl *ssl, char *in)
 	else
 	{
 		ret_len = 4 * ((ssl->in_size + 2) / 3);
-		ret_len += ret_len >= 64 ? (ret_len % 64) : 0;
+		ret_len += ret_len >= 64 ? (ret_len / 64) : 0;
 		NULL_GUARD(ret = ft_strnew(ret_len));
 		base64_encode(in, ssl->in_size, ret, ret_len);
 	}
@@ -57,7 +57,7 @@ void	base64_encode(char *in, int len, char *ret, int ret_len)
 	int			j;
 
 	key = B64;
-	b.iter = 0;
+	ft_bzero(&b, sizeof(t_b64));
 	j = -1;
 	while (b.iter < len)
 	{
@@ -67,7 +67,12 @@ void	base64_encode(char *in, int len, char *ret, int ret_len)
 		b.out_c = b.iter < len ? (uint8_t)in[b.iter++] : 0;
 		b.out_d = (b.out_a << 16) | (b.out_b << 8) | b.out_c;
 		while (++i < 4)
+		{
 			ret[++j] = key[(b.out_d >> (18 - (6 * i))) & 0x3f];
+			b.out_e += 1;
+			MATCH(b.out_e == 64, ret[++j] = '\n');
+			MATCH(b.out_e == 64, b.out_e = 0);
+		}
 	}
 	ret[ret_len - 1] = !b.out_c ? '=' : ret[ret_len - 1];
 	ret[ret_len - 2] = !b.out_b ? '=' : ret[ret_len - 2];

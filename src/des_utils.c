@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:49:49 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/15 21:14:49 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void		des_clean(t_ssl *ssl, t_des *des)
 	int			i;
 	int			j;
 
-	MATCH(ssl->user_pass, free(ssl->user_pass));
+	MATCH(!ssl->flag->p && ssl->user_pass, free(ssl->user_pass));
 	MATCH(ssl->user_salt, free(ssl->user_salt));
 	MATCH(ssl->user_key, free(ssl->user_key));
 	MATCH(ssl->user_iv, free(ssl->user_iv));
@@ -94,5 +94,3 @@ char		*des_enc_out(t_ssl *ssl, t_des *des)
 	}
 	return (ret);
 }
-
-

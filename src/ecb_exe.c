@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:50:21 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/15 20:06:24 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
 	size_t		j;
 	char		*ret;
 
-	MATCH(ssl->in_size % 8 != 0, ft_error("Bad decrypt: Incorrect input size.", 1));
+	MATCH(ssl->in_size % 8 != 0,
+		ft_error("Bad decrypt: Incorrect input size.", 1));
 	ret = ft_strnew(ssl->in_size);
 	i = ssl->in_size;
 	while (ssl->ou_size < ssl->in_size)

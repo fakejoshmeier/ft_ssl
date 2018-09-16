@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 12:20:44 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:50:30 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/15 20:06:43 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char		*cbc_exe(t_ssl *ssl, char *in)
 	des_init(&des);
 	des_pbkdf(ssl, &des, &in);
 	des_subkeys(&des, ssl->flag->d, des.key);
-	des.iv = hex_str_to_64bit(ssl->user_iv);
+	des.iv = b_endian64(hex_str_to_64bit(ssl->user_iv));
 	if (ssl->flag->a && ssl->flag->d)
 	{
 		tmp = base64_exe(ssl, in);
@@ -75,7 +75,8 @@ char		*cbc_decrypt(t_des *des, t_ssl *ssl, char *in)
 	size_t		j;
 	char		*ret;
 
-	MATCH(ssl->in_size % 8 != 0, ft_error("Bad decrypt: Incorrect input size.", 1));
+	MATCH(ssl->in_size % 8 != 0,
+		ft_error("Bad decrypt: Incorrect input size.", 1));
 	ret = ft_strnew(ssl->in_size);
 	i = ssl->in_size;
 	while (ssl->ou_size < ssl->in_size)
