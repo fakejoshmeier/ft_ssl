@@ -6,30 +6,20 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/23 02:59:31 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/06 18:49:03 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SSL_H
 # define SSL_H
+# include "ssl_macros.h"
 # include <libft.h>
 # include <ft_printf.h>
 # include <limits.h>
 # include <time.h>
 # include <stdio.h>
 # include <stdlib.h>
-# define USAGE "usage: ft_ssl command [command opts] [command args]"
-# define MESSAGE_DIGEST_FLAGS "-p -q -r -s"
-# define BASE64_FLAGS "-d -e -i -o"
-# define DES_FLAGS "-a -d -e -i -k -o -p -s -v"
-# define B64 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-# define MD5_F1(b, c, d) ((b & c) | ((~b) & d))
-# define MD5_F2(b, c, d) ((d & b) | ((~d) & c))
-# define MD5_F3(b, c, d) (b ^ c ^ d)
-# define MD5_F4(b, c, d) (c ^ (b | (~d)))
-# define LEFT_ROT(x, c) ((x << c) | (x >> (32 - c)))
-# define RITE_ROT(x, c) ((x >> c) | (x << (32 - c)))
-# define S512_ROT(x, c) ((x >> c) | (x << (64 - c)))
+# include <readpassphrase.h>
 
 typedef union		u_bit64
 {
@@ -48,8 +38,7 @@ typedef union		u_bit32
 
 typedef struct		s_b64
 {
-	int				yon;
-	int				san;
+	int				iter;
 	int				out_a;
 	int				out_b;
 	int				out_c;
@@ -59,6 +48,23 @@ typedef struct		s_b64
 
 typedef struct		s_des
 {
+	uint64_t		nacl;
+	uint64_t		iv;
+	uint64_t		key;
+	uint32_t		l[16];
+	uint32_t		r[16];
+	uint64_t		subkey[16];
+	uint64_t		init_perm_ret;
+	char			*user_key;
+	char			*user_iv;
+	int				*pc1;
+	int				*pc2;
+	int				*shifts;
+	int				*init_perm;
+	int				*ebit;
+	int				*s[8][4];
+	int				*p32;
+	int				*final_perm;
 }					t_des;
 
 typedef struct		s_sha
@@ -206,7 +212,8 @@ void				file_out(t_ssl *ssl, char *out);
 
 t_flag				*md_flags(char ***av, t_ssl *ssl);
 t_flag				*b64_flags(char ***av, t_ssl *ssl);
-t_flag				*des_flags(char ***av, t_ssl *ssl);
+t_flag				*ecb_flags(char ***av, t_ssl *ssl);
+t_flag				*cbc_flags(char ***av, t_ssl *ssl);
 
 /*
 ** Endian functions
@@ -277,13 +284,50 @@ void				sha512_algo(t_s512 *sha);
 char				*sha512_out(t_s512 *sha);
 
 /*
-** Base64 functions
+** Base64 Functions
 */
 
 char				*base64_exe(t_ssl *ssl, char *in);
 void				base64_encode(char *in, int len, char *ret, int ret_len);
 char				*base64_decode(char *in, int len, int ret_len);
-char				*whitespace_trim(char *in, int *len);
+char				*whitespace_trim(char *in, size_t *len);
 int					*decrypt_ref_table(void);
+
+/*
+** DES Functions
+*/
+
+void				des_init(t_des *des);
+void				des_pbkdf(t_ssl *ssl, t_des *des, char **in);
+void				des_subkeys(t_des *des, unsigned int r, uint64_t chi);
+uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
+char				*des_enc_out(t_ssl *ssl, t_des *des);
+uint64_t			process_msg(t_des *Des, uint64_t);
+uint32_t			des_f(t_des *des, uint32_t blk, uint64_t key);
+void				des_clean(t_ssl *ssl, t_des *des);
+char				*a(char *pass, uint64_t salt);
+char				*str_to_hex(char *s);
+char				*rand_hex_str(int size);
+char				convert_hex_char_to_4bit(uint8_t c);
+uint64_t			extract_salt(t_ssl *ssl, char **in);
+uint64_t			hex_str_to_64bit(char *s);
+uint64_t			des_str_to_64bit(char **in, size_t *len);
+uint64_t			blender(char *key);
+
+/*
+** ECB Functions
+*/
+
+char				*ecb_exe(t_ssl *ssl, char *in);
+char				*ecb_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*ecb_decrypt(t_des *des, t_ssl *ssl, char *in);
+
+/*
+** CBC Functions
+*/
+
+char				*cbc_exe(t_ssl *ssl, char *in);
+char				*cbc_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*cbc_decrypt(t_des *des, t_ssl *ssl, char *in);
 
 #endif
