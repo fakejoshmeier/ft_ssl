@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/15 21:14:49 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/19 16:36:43 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,4 +93,20 @@ char		*des_enc_out(t_ssl *ssl, t_des *des)
 		ret += 16;
 	}
 	return (ret);
+}
+
+uint64_t	des_str_to_64bit_dec(char **in, size_t *len)
+{
+	uint64_t	msg;
+
+	ft_memcpy(&msg, *in, 8);
+	msg = (msg & 0x00000000FFFFFFFF) << 32 |
+				(msg & 0xFFFFFFFF00000000) >> 32;
+	msg = (msg & 0x0000FFFF0000FFFF) << 16 |
+				(msg & 0xFFFF0000FFFF0000) >> 16;
+	msg = (msg & 0x00FF00FF00FF00FF) << 8 |
+				(msg & 0xFF00FF00FF00FF00) >> 8;
+	*in += 8;
+	*len -= 8;
+	return (msg);
 }

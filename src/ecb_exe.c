@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/15 20:06:24 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/19 16:39:33 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char		*ecb_exe(t_ssl *ssl, char *in)
 		tmp = base64_exe(ssl, ret);
 		ret = tmp;
 	}
-	free(in);
+	MATCH(!ssl->flag->a, free(in));
 	des_clean(ssl, &des);
 	return (ret);
 }
@@ -79,7 +79,7 @@ char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
 	i = ssl->in_size;
 	while (ssl->ou_size < ssl->in_size)
 	{
-		msg = des_str_to_64bit(&in, &i);
+		msg = des_str_to_64bit_dec(&in, &i);
 		d_msg = process_msg(des, msg);
 		j = -1;
 		while (++j < 8)
