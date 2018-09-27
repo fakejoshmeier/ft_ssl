@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/25 22:05:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 01:33:24 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 02:14:14 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,9 @@ char	*ecb3_decrypt(t_des *des, t_ssl *ssl, char *in)
 	while (ssl->ou_size < ssl->in_size)
 	{
 		msg = des_str_to_64bit_dec(&in, &i);
-		e_msg = process_msg(des, msg, des->subkey);
-		msg = process_msg(des, e_msg, des->subkey2);
 		e_msg = process_msg(des, msg, des->subkey3);
+		msg = process_msg(des, e_msg, des->subkey2);
+		e_msg = process_msg(des, msg, des->subkey);
 		j = -1;
 		while (++j < 8)
 			ret[ssl->ou_size + j] = (e_msg >> (56 -(j * 8))) & 0xff;

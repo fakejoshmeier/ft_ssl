@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 01:13:34 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 02:44:36 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ t_flag				*b64_flags(char ***av, t_ssl *ssl);
 t_flag				*ecb_flags(char ***av, t_ssl *ssl);
 t_flag				*cbc_flags(char ***av, t_ssl *ssl);
 t_flag				*ecb3_flags(char ***av, t_ssl *ssl);
+t_flag				*cbc3_flags(char ***av, t_ssl *ssl);
 
 /*
 ** Endian functions
@@ -349,5 +350,13 @@ void				distribute_key(t_ssl *ssl, t_des *des);
 char				*ecb3_exe(t_ssl *ssl, char *in);
 char				*ecb3_encrypt(t_des *des, t_ssl *ssl, char *in);
 char				*ecb3_decrypt(t_des *des, t_ssl *ssl, char *in);
+
+/*
+** CBC3 Functions
+*/
+
+char				*cbc3_exe(t_ssl *ssl, char *in);
+char				*cbc3_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*cbc3_decrypt(t_des *des, t_ssl *ssl, char *in);
 
 #endif
