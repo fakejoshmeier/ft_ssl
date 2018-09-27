@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/25 07:12:26 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/19 16:36:43 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 00:15:55 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 ** I'll follow that example.
 */
 
-char		*a(char *pass, uint64_t salt)
+char		*a(char *pass, uint64_t salt, t_ssl *ssl)
 {
 	t_ssl		hash;
 	char		*ret;
@@ -29,10 +29,13 @@ char		*a(char *pass, uint64_t salt)
 	hash.in_size = i + 8;
 	ft_memcpy(tmp, pass, i);
 	ft_memcpy(&tmp[i], &salt, 8);
-	ret = md5_exe(&hash, tmp);
+	ret = ssl->triple ? sha256_exe(&hash, tmp) : md5_exe(&hash, tmp);
+	ft_strtoupper(&ret);
+	if (!ssl->user_iv)
+		ssl->user_iv = ssl->triple ? ft_strndup(&ret[48], 16) :
+			ft_strndup(&ret[16], 16);
 	free(tmp);
 	tmp = NULL;
-	ft_strtoupper(&ret);
 	return (ret);
 }
 
@@ -59,6 +62,7 @@ void		des_clean(t_ssl *ssl, t_des *des)
 	int			i;
 	int			j;
 
+	MATCH(ssl->user_pass, free(des->hash));
 	MATCH(!ssl->flag->p && ssl->user_pass, free(ssl->user_pass));
 	MATCH(ssl->user_salt, free(ssl->user_salt));
 	MATCH(ssl->user_key, free(ssl->user_key));

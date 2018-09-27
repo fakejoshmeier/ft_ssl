@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 21:38:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/06 18:48:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 01:27:16 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,9 @@ void		des_pbkdf(t_ssl *ssl, t_des *des, char **in)
 	MATCH(!ssl->user_salt, ssl->user_salt = rand_hex_str(16));
 	des->nacl = ssl->flag->d ? extract_salt(ssl, in) :
 		hex_str_to_64bit(ssl->user_salt);
-	MATCH(ssl->user_pass, tmp = a(ssl->user_pass, des->nacl));
-	MATCH(!ssl->user_key && tmp, ssl->user_key = ft_strndup(tmp, 16));
-	MATCH(!ssl->user_iv && tmp, ssl->user_iv = ft_strndup(&tmp[16], 16));
-	MATCH(ssl->user_pass, free(tmp));
+	MATCH(ssl->user_pass, des->hash = a(ssl->user_pass, des->nacl, ssl));
+	MATCH(!ssl->user_key && des->hash, ssl->user_key =
+		ft_strndup(des->hash, 16));
 	des->key = blender(ssl->user_key);
 }
 
@@ -97,7 +96,8 @@ uint64_t	extract_salt(t_ssl *ssl, char **in)
 ** math and indices, it's not too difficult to do.
 */
 
-void		des_subkeys(t_des *des, unsigned int r, uint64_t chi)
+void		des_subkeys(t_des *des, unsigned int r, uint64_t chi,
+		uint64_t subkey[16])
 {
 	uint64_t	perm_key;
 	int			i;
@@ -117,7 +117,7 @@ void		des_subkeys(t_des *des, unsigned int r, uint64_t chi)
 	{
 		j = !r ? i : 15 - i;
 		perm_key = ((uint64_t)des->l[i] << 28) | (uint64_t)des->r[i];
-		des->subkey[j] = permute_key_by_x_for_y(perm_key, des->pc2, 48);
+		subkey[j] = permute_key_by_x_for_y(perm_key, des->pc2, 48);
 	}
 }
 

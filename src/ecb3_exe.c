@@ -1,33 +1,62 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ecb_exe.c                                          :+:      :+:    :+:   */
+/*   ecb3_exe.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/08/23 16:54:16 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 01:36:53 by jmeier           ###   ########.fr       */
+/*   Created: 2018/09/25 22:05:22 by jmeier            #+#    #+#             */
+/*   Updated: 2018/09/27 01:33:24 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-char		*ecb_exe(t_ssl *ssl, char *in)
+char	*ecb3_exe(t_ssl *ssl, char *in)
 {
 	t_des		des;
 	char		*ret;
 
 	des_init(&des);
 	des_pbkdf(ssl, &des, &in);
+	distribute_key(ssl, &des);
 	des_subkeys(&des, ssl->flag->d, des.key, des.subkey);
-	ret = ssl->flag->d ? ecb_decrypt(&des, ssl, in) :
-		ecb_encrypt(&des, ssl, in);
-//	free(in);
+	des_subkeys(&des, !ssl->flag->d, des.key2, des.subkey2);
+	des_subkeys(&des, ssl->flag->d, des.key3, des.subkey3);
+	ret = ssl->flag->d ? ecb3_decrypt(&des, ssl, in) :
+		ecb3_encrypt(&des, ssl, in);
+	free(in);
 	des_clean(ssl, &des);
 	return (ret);
 }
 
-char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
+void	distribute_key(t_ssl *ssl, t_des *des)
+{
+	char		*tmp;
+
+	if (ssl->flag->k)
+	{
+		tmp = ft_strndup(ssl->user_key, 16);
+		des->key = blender(tmp);
+		free(tmp);
+		tmp = ft_strndup(&ssl->user_key[16], 16);
+		des->key2 = blender(tmp);
+		free(tmp);
+		tmp = ft_strndup(&ssl->user_key[32], 16);
+		des->key3 = blender(tmp);
+	}
+	else
+	{
+		tmp = ft_strndup(&des->hash[16], 16);
+		des->key2 = blender(tmp);
+		free(tmp);
+		tmp = ft_strndup(&des->hash[32], 16);
+		des->key3 = blender(tmp);
+	}
+	free(tmp);
+}
+
+char	*ecb3_encrypt(t_des *des, t_ssl *ssl, char *in)
 {
 	uint64_t	msg;
 	uint64_t	e_msg;
@@ -42,9 +71,11 @@ char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
 	{
 		msg = des_str_to_64bit(&in, &i);
 		e_msg = process_msg(des, msg, des->subkey);
+		msg = process_msg(des, e_msg, des->subkey2);
+		e_msg = process_msg(des, msg, des->subkey3);
 		j = -1;
 		while (++j < 8)
-			ret[ssl->ou_size + j] = (e_msg >> (56 - (j * 8))) & 0xff;
+			ret[ssl->ou_size + j] = (e_msg >> (56 -(j * 8))) & 0xff;
 		ssl->ou_size += 8;
 	}
 	ret -= ssl->user_pass ? 16 : 0;
@@ -52,10 +83,10 @@ char		*ecb_encrypt(t_des *des, t_ssl *ssl, char *in)
 	return (ret);
 }
 
-char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
+char	*ecb3_decrypt(t_des *des, t_ssl *ssl, char *in)
 {
 	uint64_t	msg;
-	uint64_t	d_msg;
+	uint64_t	e_msg;
 	char		*ret;
 	size_t		i;
 	size_t		j;
@@ -67,10 +98,12 @@ char		*ecb_decrypt(t_des *des, t_ssl *ssl, char *in)
 	while (ssl->ou_size < ssl->in_size)
 	{
 		msg = des_str_to_64bit_dec(&in, &i);
-		d_msg = process_msg(des, msg, des->subkey);
+		e_msg = process_msg(des, msg, des->subkey);
+		msg = process_msg(des, e_msg, des->subkey2);
+		e_msg = process_msg(des, msg, des->subkey3);
 		j = -1;
 		while (++j < 8)
-			ret[ssl->ou_size + j] = (d_msg >> (56 - (j * 8))) & 0xff;
+			ret[ssl->ou_size + j] = (e_msg >> (56 -(j * 8))) & 0xff;
 		ssl->ou_size += 8;
 	}
 	return (ret);

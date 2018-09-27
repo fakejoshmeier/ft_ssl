@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 12:20:44 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/19 16:39:06 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/26 22:21:58 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char		*cbc_exe(t_ssl *ssl, char *in)
 
 	des_init(&des);
 	des_pbkdf(ssl, &des, &in);
-	des_subkeys(&des, ssl->flag->d, des.key);
+	des_subkeys(&des, ssl->flag->d, des.key, des.subkey);
 	des.iv = b_endian64(hex_str_to_64bit(ssl->user_iv));
 	if (ssl->flag->a && ssl->flag->d)
 	{
@@ -55,7 +55,7 @@ char		*cbc_encrypt(t_des *des, t_ssl *ssl, char *in)
 	while (ssl->ou_size < ssl->in_size)
 	{
 		msg = des_str_to_64bit(&in, &i) ^ des->iv;
-		e_msg = process_msg(des, msg);
+		e_msg = process_msg(des, msg, des->subkey);
 		des->iv = e_msg;
 		j = -1;
 		while (++j < 8)
@@ -82,7 +82,7 @@ char		*cbc_decrypt(t_des *des, t_ssl *ssl, char *in)
 	while (ssl->ou_size < ssl->in_size)
 	{
 		msg = des_str_to_64bit_dec(&in, &i);
-		d_msg = process_msg(des, msg) ^ des->iv;
+		d_msg = process_msg(des, msg, des->subkey) ^ des->iv;
 		des->iv = d_msg;
 		j = -1;
 		while (++j < 8)
