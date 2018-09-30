@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/21 11:59:21 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/15 19:53:04 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 15:44:44 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ char	*base64_exe(t_ssl *ssl, char *in)
 	}
 	ssl->in_size = ret_len;
 	ssl->ou_size = ret_len;
-	free(in);
 	return (ret);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 00:08:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 01:37:11 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 22:28:28 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	cipher(t_ssl *ssl)
 	if (ssl->flag->a && ssl->flag->d)
 	{
 		tmp = base64_exe(ssl, in);
+		free(in);
 		in = tmp;
 		ssl->ou_size = 0;
 	}
@@ -31,10 +32,12 @@ void	cipher(t_ssl *ssl)
 	{
 		ssl->in_size = ssl->ou_size;
 		tmp = base64_exe(ssl, out);
+		free(out);
 		out = tmp;
 	}
 	ssl->flag->o ? write_to_file(out, ssl->ou_file, ssl->ou_size) :
 		write(1, out, ssl->ou_size);
+	free(in);
 	free(out);
 }
 

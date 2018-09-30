@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/25 22:05:22 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 02:14:14 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 15:46:09 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ char	*ecb3_exe(t_ssl *ssl, char *in)
 	des_subkeys(&des, ssl->flag->d, des.key3, des.subkey3);
 	ret = ssl->flag->d ? ecb3_decrypt(&des, ssl, in) :
 		ecb3_encrypt(&des, ssl, in);
-	free(in);
 	des_clean(ssl, &des);
 	return (ret);
 }

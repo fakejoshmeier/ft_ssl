@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/27 02:30:51 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/27 02:45:10 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/29 16:57:15 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ char	*cbc3_exe(t_ssl *ssl, char *in)
 	des.iv = b_endian64(hex_str_to_64bit(ssl->user_iv));
 	ret = ssl->flag->d ? cbc3_decrypt(&des, ssl, in) :
 		cbc3_encrypt(&des, ssl, in);
-	free(in);
 	des_clean(ssl, &des);
 	return (ret);
 }
@@ -44,7 +43,7 @@ char	*cbc3_encrypt(t_des *des, t_ssl *ssl, char *in)
 	ret = des_enc_out(ssl, des);
 	while (ssl->ou_size < ssl->in_size)
 	{
-		msg = des_str_to_64bit(&in, &i) ^ des->iv;
+		msg = (des_str_to_64bit(&in, &i)) ^ des->iv;
 		e_msg = process_msg(des, msg, des->subkey);
 		msg = process_msg(des, e_msg, des->subkey2);
 		e_msg = process_msg(des, msg, des->subkey3);
@@ -75,9 +74,9 @@ char	*cbc3_decrypt(t_des *des, t_ssl *ssl, char *in)
 	{
 		msg = des_str_to_64bit_dec(&in, &i);
 		d_msg = process_msg(des, msg, des->subkey3);
-		d_msg = process_msg(des, d_msg, des->subkey2);
-		d_msg = process_msg(des, d_msg, des->subkey) ^ des->iv;
-		des->iv = msg;
+		msg = process_msg(des, d_msg, des->subkey2);
+		d_msg = (process_msg(des, msg, des->subkey)) ^ des->iv;
+		des->iv = d_msg;
 		j = -1;
 		while (++j < 8)
 			ret[ssl->ou_size + j] = (d_msg >> (56 -(j * 8))) & 0xff;
