@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 16:37:10 by jmeier            #+#    #+#             */
-/*   Updated: 2018/10/22 15:27:41 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/10/22 15:30:50 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,17 @@ typedef struct		s_des
 	uint64_t		nacl;
 	uint64_t		iv;
 	uint64_t		key;
+	uint64_t		key2;
+	uint64_t		key3;
 	uint32_t		l[16];
 	uint32_t		r[16];
 	uint64_t		subkey[16];
+	uint64_t		subkey2[16];
+	uint64_t		subkey3[16];
 	uint64_t		init_perm_ret;
 	char			*user_key;
 	char			*user_iv;
+	char			*hash;
 	int				*pc1;
 	int				*pc2;
 	int				*shifts;
@@ -169,6 +174,7 @@ typedef struct		s_ssl
 	int				run;
 	char			*cmd__;
 	char			*cmd_;
+	int				triple;
 	t_flag			*flag;
 	t_md5			*md5;
 	void			(*cmd)(struct s_ssl *);
@@ -210,10 +216,14 @@ void				file_out(t_ssl *ssl, char *out);
 ** Flag handling
 */
 
+void				set_val(char ***arg, char **value, unsigned int *flag, int
+	len);
 t_flag				*md_flags(char ***av, t_ssl *ssl);
 t_flag				*b64_flags(char ***av, t_ssl *ssl);
 t_flag				*ecb_flags(char ***av, t_ssl *ssl);
 t_flag				*cbc_flags(char ***av, t_ssl *ssl);
+t_flag				*ecb3_flags(char ***av, t_ssl *ssl);
+t_flag				*cbc3_flags(char ***av, t_ssl *ssl);
 
 /*
 ** Endian functions
@@ -299,19 +309,21 @@ int					*decrypt_ref_table(void);
 
 void				des_init(t_des *des);
 void				des_pbkdf(t_ssl *ssl, t_des *des, char **in);
-void				des_subkeys(t_des *des, unsigned int r, uint64_t chi);
+void				des_subkeys(t_des *des, unsigned int r, uint64_t chi,
+	uint64_t subkey[16]);
 uint64_t			permute_key_by_x_for_y(uint64_t key, int *pc, int size);
 char				*des_enc_out(t_ssl *ssl, t_des *des);
-uint64_t			process_msg(t_des *des, uint64_t key);
+uint64_t			process_msg(t_des *des, uint64_t msg, uint64_t subkey[16]);
 uint32_t			des_f(t_des *des, uint32_t blk, uint64_t key);
 void				des_clean(t_ssl *ssl, t_des *des);
-char				*a(char *pass, uint64_t salt);
+char				*a(char *pass, uint64_t salt, t_ssl *ssl);
 char				*str_to_hex(char *s);
 char				*rand_hex_str(int size);
 char				convert_hex_char_to_4bit(uint8_t c);
 uint64_t			extract_salt(t_ssl *ssl, char **in);
 uint64_t			hex_str_to_64bit(char *s);
 uint64_t			des_str_to_64bit(char **in, size_t *len);
+uint64_t			des_str_to_64bit_dec(char **in, size_t *len);
 uint64_t			blender(char *key);
 
 /*
@@ -329,5 +341,22 @@ char				*ecb_decrypt(t_des *des, t_ssl *ssl, char *in);
 char				*cbc_exe(t_ssl *ssl, char *in);
 char				*cbc_encrypt(t_des *des, t_ssl *ssl, char *in);
 char				*cbc_decrypt(t_des *des, t_ssl *ssl, char *in);
+
+/*
+** ECB3 Functions
+*/
+
+void				distribute_key(t_ssl *ssl, t_des *des);
+char				*ecb3_exe(t_ssl *ssl, char *in);
+char				*ecb3_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*ecb3_decrypt(t_des *des, t_ssl *ssl, char *in);
+
+/*
+** CBC3 Functions
+*/
+
+char				*cbc3_exe(t_ssl *ssl, char *in);
+char				*cbc3_encrypt(t_des *des, t_ssl *ssl, char *in);
+char				*cbc3_decrypt(t_des *des, t_ssl *ssl, char *in);
 
 #endif

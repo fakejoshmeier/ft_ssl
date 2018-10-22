@@ -6,13 +6,13 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/26 00:16:36 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/03 20:54:26 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/27 01:39:27 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ssl.h>
 
-uint64_t	process_msg(t_des *des, uint64_t msg)
+uint64_t	process_msg(t_des *des, uint64_t msg, uint64_t subkey[16])
 {
 	uint64_t	left;
 	uint64_t	rite;
@@ -23,12 +23,12 @@ uint64_t	process_msg(t_des *des, uint64_t msg)
 	left = des->init_perm_ret >> 32;
 	rite = des->init_perm_ret & 0xffffffff;
 	des->l[0] = rite;
-	des->r[0] = left ^ des_f(des, rite, des->subkey[0]);
+	des->r[0] = left ^ des_f(des, rite, subkey[0]);
 	i = 0;
 	while (++i < 16)
 	{
 		des->l[i] = des->r[i - 1];
-		des->r[i] = des->l[i - 1] ^ des_f(des, des->r[i - 1], des->subkey[i]);
+		des->r[i] = des->l[i - 1] ^ des_f(des, des->r[i - 1], subkey[i]);
 	}
 	ret = ((uint64_t)des->r[15] << 32) | (uint64_t)des->l[15];
 	return (permute_key_by_x_for_y(ret, des->final_perm, 64));

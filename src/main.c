@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/14 17:01:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/09/03 15:31:07 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/28 23:25:46 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ void	ft_error(char *str, int i)
 	MATCH(i == 1, ft_putendl(str));
 	OR(i == 2, ft_printf("ft_ssl: Error: '%s' is an invalid command.\n\n\
 Standard commands:\nMessage Digest commands:\nmd5\nsha224\nsha256\nsha384\n\
-sha512\n\nCipher commands:\nbase64\ndes\ndes-ecb\ndes-cbc\n", str));
+sha512\n\nCipher commands:\nbase64\ndes\ndes-ecb\ndes-cbc\ndes3\ndes3-ecb\n\
+des3-cbc\n", str));
 	OR(i == 3, ft_printf("unknown option '%s'\noptions are\n-p\techo STDIN to\
 STDOUT and append the checksum to STDOUT\n-q\tquiet mode\n-r\treverse the \
 format of the output\n-s\tprint the sum of the given string\n", str));

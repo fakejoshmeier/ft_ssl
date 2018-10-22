@@ -6,7 +6,7 @@
 /*   By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 00:08:27 by jmeier            #+#    #+#             */
-/*   Updated: 2018/08/29 03:22:44 by jmeier           ###   ########.fr       */
+/*   Updated: 2018/09/29 22:20:52 by jmeier           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,28 @@ void	cipher(t_ssl *ssl)
 {
 	char	*in;
 	char	*out;
+	char	*tmp;
 
 	in = ssl->flag->i ? file_in(ssl) : stdin_in(ssl);
 	MATCH(!in, ft_error("ft_ssl: failed to get input", 1));
+	if (ssl->flag->a && ssl->flag->d)
+	{
+		tmp = base64_exe(ssl, in);
+		free(in);
+		in = tmp;
+		ssl->ou_size = 0;
+	}
 	out = ssl->exe(ssl, in);
+	if (ssl->flag->a && !ssl->flag->d)
+	{
+		ssl->in_size = ssl->ou_size;
+		tmp = base64_exe(ssl, out);
+		free(out);
+		out = tmp;
+	}
 	ssl->flag->o ? write_to_file(out, ssl->ou_file, ssl->ou_size) :
 		write(1, out, ssl->ou_size);
+	free(in);
 	free(out);
 }
 
