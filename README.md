@@ -67,7 +67,7 @@ des3-cbc
 ```
 The `des` and `des3` commands default to their CBC variants, as in OpenSSL.
 
-For the base64 commands, the following flags can be taken as arguments.
+<h5>For the base64 commands, the following flags can be taken as arguments.</h5>
 
 `-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
 
@@ -77,7 +77,7 @@ For the base64 commands, the following flags can be taken as arguments.
 
 `-d` - Decrypt mode.
 
-For the des-ecb commands, all of the above flags and the following flags can be taken as arguments.
+<h5>For the des-ecb commands, all of the above flags and the following flags can be taken as arguments.</h5>
 
 `-a` - In encrypt mode, the encrypted output will be encoded in base64.  In decrypt mode, the base64 input will be decoded and then decrypted.
 
@@ -87,7 +87,7 @@ For the des-ecb commands, all of the above flags and the following flags can be 
 
 `-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.
 
-For the des-cbc commands, all of the above flags and the following flags can be taken as arguments.
+<h5>For the des-cbc commands, all of the above flags and the following flags can be taken as arguments.</h5>
 
 `-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.  Must be used in conjunction with the `-v` flag.
 
