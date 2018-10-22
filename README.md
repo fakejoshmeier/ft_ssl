@@ -77,15 +77,7 @@ For the base64 commands, the following flags can be taken as arguments.
 
 `-d` - Decrypt mode.
 
-For the des-ecb commands, the following flags can be taken as arguments.
-
-`-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
-
-`-o` - Output will be written to the given file, equivalent to OpenSSL's `-out` flag.
-
-`-e` - Encrypt mode.
-
-`-d` - Decrypt mode.
+For the des-ecb commands, all of the above flags and the following flags can be taken as arguments.
 
 `-a` - In encrypt mode, the encrypted output will be encoded in base64.  In decrypt mode, the base64 input will be decoded and then decrypted.
 
@@ -95,23 +87,8 @@ For the des-ecb commands, the following flags can be taken as arguments.
 
 `-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.
 
-For the des-cbc commands, the following flags can be taken as arguments.
-
-`-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
-
-`-o` - Output will be written to the given file, equivalent to OpenSSL's `-out` flag.
-
-`-e` - Encrypt mode.
-
-`-d` - Decrypt mode.
-
-`-a` - In encrypt mode, the encrypted output will be encoded in base64.  In decrypt mode, the base64 input will be decoded and then decrypted.
-
-`-p` - A string will be taken as a password and used for key generation. Equivalent to OpenSSL's `-pass` flag.
-
-`-s` - A hexadecimal string with a maximum length of 16 characters will be taken as a salt and used for key generation.  Equivalent to OpenSSL's `-S` flag.
+For the des-cbc commands, all of the above flags and the following flags can be taken as arguments.
 
 `-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.  Must be used in conjunction with the `-v` flag.
 
 `-v` - A hexadecimal string with a maximum length of 16 characters will be taken as an initialization vector and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-iv` flag.  Must be used in conjunction with the `-k` flag.
-
