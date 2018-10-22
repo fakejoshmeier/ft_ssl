@@ -7,6 +7,8 @@ The first part of this project is to imitate message digest functions, such as m
 
 To run the program, first run `make`, and then `./ft_ssl` with the appropriate command.
 
+<hr>
+
 Hash algorithms implemented are:
 ```
 md5
@@ -50,3 +52,66 @@ The program can also take flags as arguments.  Flags for message digest commands
 `-r` - Reverses the printing order, hash first with the original input/filename appended.
 
 `-s` - Signifies a string input.
+
+<hr>
+
+Cipher functions implemented are:
+```
+base64
+des
+des-ecb
+des-cbc
+des3
+des3-ecb
+des3-cbc
+```
+The `des` and `des3` commands default to their CBC variants, as in OpenSSL.
+
+For the base64 commands, the following flags can be taken as arguments.
+
+`-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
+
+`-o` - Output will be written to the given file, equivalent to OpenSSL's `-out` flag.
+
+`-e` - Encrypt mode.
+
+`-d` - Decrypt mode.
+
+For the des-ecb commands, the following flags can be taken as arguments.
+
+`-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
+
+`-o` - Output will be written to the given file, equivalent to OpenSSL's `-out` flag.
+
+`-e` - Encrypt mode.
+
+`-d` - Decrypt mode.
+
+`-a` - In encrypt mode, the encrypted output will be encoded in base64.  In decrypt mode, the base64 input will be decoded and then decrypted.
+
+`-p` - A string will be taken as a password and used for key generation. Equivalent to OpenSSL's `-pass` flag.
+
+`-s` - A hexadecimal string with a maximum length of 16 characters will be taken as a salt and used for key generation.  Equivalent to OpenSSL's `-S` flag.
+
+`-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.
+
+For the des-cbc commands, the following flags can be taken as arguments.
+
+`-i` - Filenames can be entered as arguments, equivalent to OpenSSL's `-in` flag.
+
+`-o` - Output will be written to the given file, equivalent to OpenSSL's `-out` flag.
+
+`-e` - Encrypt mode.
+
+`-d` - Decrypt mode.
+
+`-a` - In encrypt mode, the encrypted output will be encoded in base64.  In decrypt mode, the base64 input will be decoded and then decrypted.
+
+`-p` - A string will be taken as a password and used for key generation. Equivalent to OpenSSL's `-pass` flag.
+
+`-s` - A hexadecimal string with a maximum length of 16 characters will be taken as a salt and used for key generation.  Equivalent to OpenSSL's `-S` flag.
+
+`-k` - A hexadecimal string with a maximum length of 16 characters will be taken as a key and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-K` flag.  Must be used in conjunction with the `-v` flag.
+
+`-v` - A hexadecimal string with a maximum length of 16 characters will be taken as an initialization vector and used in encrypting/decrypting the message.  Equivalent to OpenSSL's `-iv` flag.  Must be used in conjunction with the `-k` flag.
+
