@@ -6,7 +6,7 @@
 #    By: jmeier <jmeier@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/14 16:30:04 by jmeier            #+#    #+#              #
-#    Updated: 2018/09/27 02:42:02 by jmeier           ###   ########.fr        #
+#    Updated: 2018/10/22 18:57:15 by jmeier           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ LIB_LOC = ftprintf/
 LIB_NAM = libftprintf.a
 LIB_SRC = $(addprefix $(LIB_LOC), $(LIB_NAM))
 
-H_LOC = -I inc/ -I ftprintf/inc -I ftprintf/libft/inc
+H_LOC = -I inc/ -I ft_printf/inc -I ft_printf/libft/inc
 HEADERS = inc/*.h
 
 all: $(NAME)
